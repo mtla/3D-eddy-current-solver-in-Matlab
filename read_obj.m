@@ -47,14 +47,14 @@ if(verbose),disp(['Reading Object file : ' fullfilename]); end
 % Read the DI3D OBJ textfile to a cell array
 file_words = file2cellarray( fullfilename);
 % Remove empty cells, merge lines split by "\" and convert strings with values to double
-[ftype fdata]= fixlines(file_words);
+[ftype, fdata]= fixlines(file_words);
 
 % Vertex data
 vertices=[]; nv=0;
 
 % Loop through the Wavefront object file
 for iline=1:length(ftype)
-    if(mod(iline,10000)==0),
+    if(mod(iline,10000)==0)
         if(verbose),disp(['Lines processed : ' num2str(iline)]); end
     end
 
@@ -62,17 +62,6 @@ for iline=1:length(ftype)
 
     % Switch on data type line
     switch(type)
-        case{'mtllib'}
-            if(iscell(data))
-                datanew=[];
-                for i=1:length(data)
-                    datanew=[datanew data{i}];
-                    if(i<length(data)), datanew=[datanew ' ']; end
-                end
-                data=datanew;
-            end
-
-            filename_mtl=fullfile(filefolder,data);
         case('v') % vertices
             nv=nv+1;
             if(length(data)==3)
@@ -93,7 +82,7 @@ index=0;
 i=0;
 
 % Add all data to output struct
-OBJ.vertices=vertices(1:nv,:);
+OBJ=vertices(1:nv,:);
 if(verbose),disp('Finished Reading Object file'); end
 
 
@@ -111,7 +100,7 @@ fclose(fid);
 file_lines = regexp(file_text, '\n+', 'split');
 file_words = regexp(file_lines, '\s+', 'split');
 
-function [ftype fdata]=fixlines(file_words)
+function [ftype, fdata]=fixlines(file_words)
 ftype=cell(size(file_words));
 fdata=cell(size(file_words));
 

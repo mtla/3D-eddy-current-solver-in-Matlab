@@ -17,7 +17,7 @@ t = [1 2 3;
 msh = struct('p', p, 't', t);
 
 %determining nodes on the Dirichlet boundary
-DirichletNodes = [2 3];%find( msh.p(1,:) > 0.99 );
+DirichletNodes = find( msh.p(1,:) > 0.99 ); % = [2 3];
 DirichletNodes = unique(DirichletNodes); %ALWAYS make sure you don't have dublicates; they frak up the entire problem
 
 %current density in each element [A/m^2]
