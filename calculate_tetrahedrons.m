@@ -1,4 +1,4 @@
-function [ output_args ] = calculate_tetrahedrons( input_args )
+function tetras = calculate_tetrahedrons( vertices )
 % This function converts an array of 3D vertices into
 % the appropriate formulation needed in the FEM calculation
 %
