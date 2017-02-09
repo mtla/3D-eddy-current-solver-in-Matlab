@@ -17,6 +17,8 @@ function tetrahedrons = calculate_tetrahedrons( vertices )
 %
 % exmaple output:
 % 
+    [h,w] = size(vertices);
+    tmp = [[1:h]' vertices];
     tetrahedrons = vertices;
 end
 
