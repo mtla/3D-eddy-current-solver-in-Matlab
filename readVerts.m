@@ -13,15 +13,16 @@ CZ = [];
 while ischar(tline)
 %     % skip < and >
 %     tline = substr(tline, 1, length(tline)-2)
+    if (tline(1) ~= '#') % skip comment lines
 
-    % extract numbers
-    temp = textscan(tline,'%f%f%f');
-%     celldisp(temp);
-%     disp(temp(1));
-    CX(end+1) = temp{1};
-    CY(end+1) = temp{2};
-    CZ(end+1) = temp{3};
-
+        % extract numbers
+        temp = textscan(tline,'%f%f%f');
+    %     celldisp(temp);
+    %     disp(temp(1));
+        CX(end+1) = temp{1};
+        CY(end+1) = temp{2};
+        CZ(end+1) = temp{3};
+    end
     tline = fgetl(fid);
 end
 
