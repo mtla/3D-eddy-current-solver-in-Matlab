@@ -1,4 +1,4 @@
-function tetrahedrons = calculate_tetrahedrons( vertices )
+% function tetrahedrons = calculate_tetrahedrons()
 % This function converts an array of 3D vertices into
 % the appropriate formulation needed in the FEM calculation
 %
@@ -17,8 +17,13 @@ function tetrahedrons = calculate_tetrahedrons( vertices )
 %
 % exmaple output:
 % 
-    [h,w] = size(vertices);
-    tmp = [[1:h]' vertices];
-    tetrahedrons = vertices;
-end
+    
+
+    verts = read_obj;
+    v = verts.vertices;
+
+    DT = delaunayTriangulation(v);
+    tetrahedrons = DT;
+    tetramesh(DT);
+% end
 
