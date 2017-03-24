@@ -7,6 +7,9 @@ function [ global_matrix ] = element2global( tetrahedron_matrix, N_matrix)
 %         4x4 matrix with values according to the shape function
 %     N_matrix:
 %         "a recepi" to add the tetrahedron_matrix elements to global_matrix positions
+%         N_matrix's assumed columns: 1) element number 2) number of nodes in element (4) 
+%         3) 1st global numbers of nodes 4) 2nd global numbers of nodes ... 6) 4th global numbesr of nodes
+%         7) material number 8) source number
 % 
 % Output:
 %     global_matrix:
@@ -22,7 +25,6 @@ global_matrix = zeros(max(max(N_matrix)),max(max(N_matrix)));
 for n=1:7
     for x=1:4
          for y=1:4
-              % 
               % 
               global_matrix(N_matrix(n, x+2), N_matrix(n, y+2)) = tetrahedron_matrix(x,y);
          end
