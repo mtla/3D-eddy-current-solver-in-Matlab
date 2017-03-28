@@ -25,6 +25,8 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, nodes_coordin
         y(n) = nodes_coordinates(tetrahedron(n),2);
         z(n) = nodes_coordinates(tetrahedron(n),3);
     end
+    volume = det([ones(4,1) x' y' z'])/6;
+    
     for i = 1:4
         for j = 1:4
             % Determines the value of the specific S_ij
@@ -32,7 +34,7 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, nodes_coordin
             % 
             % CURRENT SHAPE FUNCTION IS NOT THE CORRECT ONE
             if (i ~= j)
-                tetrahedron_matrix(i,j) = (x(i)-x(j))+(y(j)-y(i));
+                tetrahedron_matrix(i,j) = (x(i)-x(j))+(y(j)-y(i))/(4*volume);
             end
         end
     end
