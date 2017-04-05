@@ -1,6 +1,11 @@
 classdef tetrahedronTest < matlab.unittest.TestCase
-    %TETRAHEDRONTEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %TETRAHEDRONTEST 
+    % Test class for testing the matrix that is returned from
+    % tetrahedron2matrix function
+    % 
+    % properties defines the variables used and TestMethodSetup assigns
+    % values to those variables. The variables should be resetted after
+    % each individual test.
     
     properties
         tetrahedron
