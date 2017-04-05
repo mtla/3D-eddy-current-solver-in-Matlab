@@ -1,4 +1,6 @@
 import matlab.unittest.TestSuite
 
-suiteClass = TestSuite.fromClass(?tetrahedronTest);
-result = run(suiteClass);
+suite = TestSuite.fromClass(?tetrahedronTest);
+result = run(suite);
+
+resultTable = table(result)
