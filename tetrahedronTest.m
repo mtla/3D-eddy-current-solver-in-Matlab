@@ -23,15 +23,18 @@ classdef tetrahedronTest < matlab.unittest.TestCase
             testCase.verifyEqual(actSolution, expSolution, ... 
                 'Determinant of tetrahedron matrix should be 0');
         end
-        
         function testDimensions(testCase)
             actSolution = size(tetrahedron2matrix(testCase.tetrahedron, testCase.node_list));
             expSolution = [4 4];
             testCase.verifyEqual(actSolution, expSolution, ... 
                 'Return matrix should be 4x4');
         end
-            
+        function testSymmetry(testCase)
+            actSolution = tetrahedron2matrix(testCase.tetrahedron, testCase.node_list);
+            expSolution = actSolution';
+            testCase.verifyEqual(actSolution, expSolution, ... 
+                'The returned matrix has to be symmetric');
+        end
     end
-    
 end
 
