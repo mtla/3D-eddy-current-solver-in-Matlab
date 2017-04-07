@@ -3,25 +3,27 @@ classdef stiffnessMatrixTest < matlab.unittest.TestCase
     %   Detailed explanation goes here
     
     properties
-        tetrahedron
+        tetrahedrons
         node_list
     end
     properties (TestParameter)
     end
     
     methods(TestMethodSetup)
-        function createBasicTetrahedron(testCase)
-            testCase.tetrahedron = [1 2 3 4];
-            testCase.node_list = [0 0 0; 0 0 1; 0 1 0; 1 0 0];
+        function createBasicTetrahedrons(testCase)
+            testCase.tetrahedrons = [8 6 5 2;7 8 5 2;7 4 8 2;7 1 4 2;7 5 1 2;7 3 4 1];
+            testCase.node_list = [1 1 -1;1 -1 -1;1 1 1;1 -1 1;-1 1 -1;-1 -1 -1;-1 1 1;-1 -1 1];
         end
     end
     
     methods (Test)
         function testDimensions(testCase)
-            actSolution = size(tetrahedron2matrix(testCase.tetrahedron, testCase.node_list));
-            expSolution = [4 4];
+            actOutput = buildStiffnessMatrix(testCase.tetrahedrons, testCase.node_list);
+            actSolution = size(actOutput);
+            expSolution = [ size(testCase.tetrahedrons, 2) size(testCase.tetrahedrons, 2) ];
+%             expSolution = [expSolution(1) expSolution(1)];
             testCase.verifyEqual(actSolution, expSolution, ... 
-                'Return matrix should be 4x4');
+                'Return matrix should be an nxn matrix where n is the number of tetrahedrons');
         end
     end
 end
