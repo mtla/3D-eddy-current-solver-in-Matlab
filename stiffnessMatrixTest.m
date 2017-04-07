@@ -20,8 +20,7 @@ classdef stiffnessMatrixTest < matlab.unittest.TestCase
         function testDimensions(testCase)
             actOutput = buildStiffnessMatrix(testCase.tetrahedrons, testCase.node_list);
             actSolution = size(actOutput);
-            expSolution = [ size(testCase.tetrahedrons, 2) size(testCase.tetrahedrons, 2) ];
-%             expSolution = [expSolution(1) expSolution(1)];
+            expSolution = ones(1,2) * size(testCase.tetrahedrons, 1);
             testCase.verifyEqual(actSolution, expSolution, ... 
                 'Return matrix should be an nxn matrix where n is the number of tetrahedrons');
         end
