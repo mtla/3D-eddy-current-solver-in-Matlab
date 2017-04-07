@@ -22,12 +22,6 @@ classdef tetrahedronTest < matlab.unittest.TestCase
     end
     
     methods (Test)
-        function testDeterminant(testCase)
-            actSolution = det(tetrahedron2matrix(testCase.tetrahedron, testCase.node_list));
-            expSolution = 0;
-            testCase.verifyEqual(actSolution, expSolution, ... 
-                'Determinant of tetrahedron matrix should be 0');
-        end
         function testDimensions(testCase)
             actSolution = size(tetrahedron2matrix(testCase.tetrahedron, testCase.node_list));
             expSolution = [4 4];
