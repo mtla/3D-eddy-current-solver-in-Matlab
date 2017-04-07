@@ -1,4 +1,4 @@
-read_obj
+read_obj('D:\Henrik\Programs\eddy-currents-fem\meshes\example_mesh_3D.obj');
 verts = ans;
 DT = delaunayTriangulation(verts.vertices);
 tetramesh(DT);
