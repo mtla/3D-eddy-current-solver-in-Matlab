@@ -1,4 +1,4 @@
-function [ sMatrix ] = buildStiffnesMatrix( tetrahedrons, verticesList )
+function [ sMatrix ] = buildStiffnessMatrix( tetrahedrons, verticesList )
 %BUILDSTIFFNESMATRIX Summary of this function goes here
 %   Detailed explanation goes here
 
