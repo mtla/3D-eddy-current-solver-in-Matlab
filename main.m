@@ -1,6 +1,5 @@
-readObj('D:\Henrik\Programs\eddy-currents-fem\meshes\example_mesh_3D.obj');
-verts = ans;
-DT = delaunayTriangulation(verts.vertices);
+verts = readObj(strcat(pwd,'\meshes\example_mesh_3D.obj'));
+DT = delaunayTriangulation(verts);
 tetramesh(DT); % plot mesh
 
 tetrahedrons = DT.ConnectivityList;
