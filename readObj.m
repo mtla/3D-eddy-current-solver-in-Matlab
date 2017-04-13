@@ -1,4 +1,4 @@
-function OBJ = read_obj(fullfilename)
+function OBJ = readObj(fullfilename)
 % Read the objects from a Wavefront OBJ file
 %
 % OBJ=read_wobj(filename);
@@ -275,7 +275,9 @@ OBJ.vertices=vertices(1:nv,:);
 OBJ.vertices_point=vertices_point(1:nvp,:);
 OBJ.vertices_normal=vertices_normal(1:nvn,:);
 OBJ.vertices_texture=vertices_texture(1:nvt,:);
-if(verbose),disp('Finished Reading Object file'); end
+if(verbose),disp('Finished Reading Object file'); 
+OBJ = OBJ.vertices; % return only vertices
+end
 
 
 function twords=stringsplit(tline,tchar)
