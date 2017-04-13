@@ -27,6 +27,7 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     % only increse if you move along the x-axis. P3, only y-axis etc.
     % This is also constant everywhere in the tetrahedron
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
+    w1 = 0.5; %integration weight for the single-point quadrature
     
     tetrahedron_matrix = zeros(4,4);
 %     volume = det([ones(4,1) x' y' z'])/6;
@@ -49,7 +50,10 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     S_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
     S_local(3,3) = gradPhi(:,3)' * gradPhi(:,3);
     S_local(4,4) = gradPhi(:,4)' * gradPhi(:,4);
-    S_local
+    % Calculates the actual contribution of the tetrahedron by using single
+    % point quadrature
+    % TODO: add the contribution of the reluctivity
+    S_local = w1 * S_local * abs(det(B));
     
 %     for i = 1:4
 %         for j = 1:4
