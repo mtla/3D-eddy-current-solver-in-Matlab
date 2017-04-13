@@ -34,5 +34,11 @@ classdef geometryTest < matlab.unittest.TestCase
             testCase.verifyEqual(actSolution, expSolution, ... 
                 "Mesh can't have duplicate vertices");
         end
+        function testTxt(testCase)
+            actSolution = readMesh(strcat(pwd,'\meshes\cube_nodes.txt'));
+            expSolution = [0 0 0;0 0 1;0 1 0;0 1 1;1 0 0;1 0 1;1 1 0;1 1 1];
+            testCase.verifyEqual(actSolution, expSolution, ... 
+                "Txt input failed!");
+        end
     end
 end
