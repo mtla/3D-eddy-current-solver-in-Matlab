@@ -31,6 +31,24 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     tetrahedron_matrix = zeros(4,4);
 %     volume = det([ones(4,1) x' y' z'])/6;
     [B,~] = map2global(tetrahedron, node_coordinates)
+    gradPhi = (B') \ gradPhi_ref %gradients of shape functions of the GLOBAL element
+    
+    %assembling the element-contribution to the stiffness matrix
+    %only upper triangular parts first
+    S_local = zeros(4,4);
+    S_local(1,2) = gradPhi(:,1)' * gradPhi(:,2);
+    S_local(1,3) = gradPhi(:,1)' * gradPhi(:,3);
+    S_local(1,4) = gradPhi(:,1)' * gradPhi(:,4);
+    S_local(2,3) = gradPhi(:,2)' * gradPhi(:,3);
+    S_local(2,4) = gradPhi(:,2)' * gradPhi(:,4);
+    S_local(3,4) = gradPhi(:,3)' * gradPhi(:,4);
+    S_local = S_local + S_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
+    % calculate the diagonal
+    S_local(1,1) = gradPhi(:,1)' * gradPhi(:,1);
+    S_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
+    S_local(3,3) = gradPhi(:,3)' * gradPhi(:,3);
+    S_local(4,4) = gradPhi(:,4)' * gradPhi(:,4);
+    S_local
     
 %     for i = 1:4
 %         for j = 1:4
