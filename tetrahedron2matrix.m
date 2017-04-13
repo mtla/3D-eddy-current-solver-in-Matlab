@@ -4,7 +4,7 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
 %
 % Input:
 %       tetrahedron: 
-%           array with for elements
+%           array with four elements
 %       nodes_coordinates: 
 %           3xn matrix with coordinates for each vertice in
 %           the mesh
@@ -29,6 +29,24 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     
     tetrahedron_matrix = zeros(4,4);
+%     volume = det([ones(4,1) x' y' z'])/6;
+    [B,~] = map2global(tetrahedron, node_coordinates)
+    
+%     for i = 1:4
+%         for j = 1:4
+%             % Determines the value of the specific S_ij
+%             % with the help of the shapefunction
+%             % 
+%             % CURRENT SHAPE FUNCTION IS NOT THE CORRECT ONE
+% %             tetrahedron_matrix(i,j) = (x(i)-x(j))+(y(j)-y(i));
+%         end
+%     end
+end
+
+function [ B, b ] = map2global( tetrahedron, node_coordinates ) 
+% Maps a single tetrahedron to the global unit tetrahedron so that
+% g_global = B*x_ref + b
+
     x = zeros(1,4);
     y = zeros(1,4);
     z = zeros(1,4);
@@ -37,16 +55,8 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
         y(n) = node_coordinates(tetrahedron(n),2);
         z(n) = node_coordinates(tetrahedron(n),3);
     end
-    volume = det([ones(4,1) x' y' z'])/6;
-    
-    for i = 1:4
-        for j = 1:4
-            % Determines the value of the specific S_ij
-            % with the help of the shapefunction
-            % 
-            % CURRENT SHAPE FUNCTION IS NOT THE CORRECT ONE
-            tetrahedron_matrix(i,j) = (x(i)-x(j))+(y(j)-y(i))/(4*volume);
-        end
-    end
+    m_tetrahedron = [x;y;z];
+    B = [m_tetrahedron(:,4)-m_tetrahedron(:,1) m_tetrahedron(:,3)-m_tetrahedron(:,1) m_tetrahedron(:,2)-m_tetrahedron(:,1)];
+    b = m_tetrahedron(:,1);
 end
 
