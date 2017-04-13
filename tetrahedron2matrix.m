@@ -1,4 +1,4 @@
-function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordinates )
+function [ S_local ] = tetrahedron2matrix( tetrahedron, node_coordinates )
 % TETRAHEDRON2MATRIX This functions takes an tetrahedron, along with a list
 % of the coordinates of the nodes, as an input and outputs an 4x4 matrix
 %
@@ -28,11 +28,9 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     % This is also constant everywhere in the tetrahedron
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
-    
-    tetrahedron_matrix = zeros(4,4);
-%     volume = det([ones(4,1) x' y' z'])/6;
-    [B,~] = map2global(tetrahedron, node_coordinates)
-    gradPhi = (B') \ gradPhi_ref %gradients of shape functions of the GLOBAL element
+
+    [B,~] = map2global(tetrahedron, node_coordinates);
+    gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first
@@ -54,16 +52,6 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     % point quadrature
     % TODO: add the contribution of the reluctivity
     S_local = w1 * S_local * abs(det(B));
-    
-%     for i = 1:4
-%         for j = 1:4
-%             % Determines the value of the specific S_ij
-%             % with the help of the shapefunction
-%             % 
-%             % CURRENT SHAPE FUNCTION IS NOT THE CORRECT ONE
-% %             tetrahedron_matrix(i,j) = (x(i)-x(j))+(y(j)-y(i));
-%         end
-%     end
 end
 
 function [ B, b ] = map2global( tetrahedron, node_coordinates ) 
