@@ -43,6 +43,7 @@ function [ tetrahedron_matrix ] = tetrahedron2matrix( tetrahedron, node_coordina
     S_local(2,4) = gradPhi(:,2)' * gradPhi(:,4);
     S_local(3,4) = gradPhi(:,3)' * gradPhi(:,4);
     S_local = S_local + S_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
+    
     % calculate the diagonal
     S_local(1,1) = gradPhi(:,1)' * gradPhi(:,1);
     S_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
@@ -65,15 +66,14 @@ function [ B, b ] = map2global( tetrahedron, node_coordinates )
 % Maps a single tetrahedron to the global unit tetrahedron so that
 % g_global = B*x_ref + b
 
-    x = zeros(1,4);
-    y = zeros(1,4);
-    z = zeros(1,4);
+    % build the tetrahedron matrix so that
+    % matrix = [x_1...x_4 ; y_1...y_4 ; z_1...z_4]
+    m_tetrahedron = zeros(3,4);
     for n = 1:4
-        x(n) = node_coordinates(tetrahedron(n),1);
-        y(n) = node_coordinates(tetrahedron(n),2);
-        z(n) = node_coordinates(tetrahedron(n),3);
+        m_tetrahedron(1,n) = node_coordinates(tetrahedron(n),1);
+        m_tetrahedron(2,n) = node_coordinates(tetrahedron(n),2);
+        m_tetrahedron(3,n) = node_coordinates(tetrahedron(n),3);
     end
-    m_tetrahedron = [x;y;z];
     B = [m_tetrahedron(:,4)-m_tetrahedron(:,1) m_tetrahedron(:,3)-m_tetrahedron(:,1) m_tetrahedron(:,2)-m_tetrahedron(:,1)];
     b = m_tetrahedron(:,1);
 end
