@@ -1,4 +1,4 @@
-function vertices = readVerts( filename )
+function vertices = readTxt( filename )
 %READVERTS Reads verts from file with three columns
 %   Input: text file with 3 columns separated by whitespace
 %   Output: [nx3] matrix of the vertices
