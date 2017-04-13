@@ -4,6 +4,7 @@ function [ sMatrix ] = buildStiffnessMatrix( tetrahedrons, vertices_list )
 
     sMatrix = zeros(max(max(tetrahedrons)));
     % get rid of the for loop. Matlab does not like them that much
+    w1 = 0.5; %integration weight for the single-point quadrature
     for row = 1:size(tetrahedrons, 1)
         tetrahedron = tetrahedrons(row, :);
         S = tetrahedron2matrix(tetrahedron, vertices_list);
