@@ -1,7 +1,21 @@
-function [ sMatrix ] = buildStiffnessMatrix( tetrahedrons, vertices_list )
-%BUILDSTIFFNESMATRIX Summary of this function goes here
-%   Detailed explanation goes here
-
+function [ sMatrix ] = buildStiffnessMatrix( DT )
+% BUILDSTIFFNESMATRIX 
+% This function inputs a delaunayTriangulation (struct), that is basically
+% a mesh that has been divided into smaller tetrahedrons. It then
+% calculates the stiffness matrix for this mesh and returns it.
+%
+% input:
+%
+%   delaunayTriangulation with properties:
+%               Points: [n×3 double]
+%     ConnectivityList: [m×4 double]
+%          Constraints: [] (usually empty)
+%
+% output: [n×n double] matrix
+%
+    
+    tetrahedrons = DT.ConnectivityList;
+    vertices_list = DT.Points;
     sMatrix = zeros(max(max(tetrahedrons)));
     % get rid of the for loop. Matlab does not like them that much
     for row = 1:size(tetrahedrons, 1)

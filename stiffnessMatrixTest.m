@@ -24,7 +24,7 @@ classdef stiffnessMatrixTest < matlab.unittest.TestCase
     methods (Test)
         function testDimensions(testCase, meshes)
             DT = readMesh(meshes);
-            actOutput = buildStiffnessMatrix(DT.ConnectivityList, DT.Points);
+            actOutput = buildStiffnessMatrix(DT);
             actSolution = size(actOutput);
             expSolution = ones(1,2) * size(DT.Points, 1);
             testCase.verifyEqual(actSolution, expSolution, ... 
