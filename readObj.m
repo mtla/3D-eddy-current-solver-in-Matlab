@@ -36,11 +36,6 @@ function OBJ = readObj(fullfilename)
 
 verbose=true;
 
-if(exist('fullfilename','var')==0)
-    [filename, filefolder] = uigetfile('*.obj', 'Read obj-file');
-    fullfilename = [filefolder filename];
-end
-filefolder = fileparts( fullfilename);
 if(verbose),disp(['Reading Object file : ' fullfilename]); end
 
 
