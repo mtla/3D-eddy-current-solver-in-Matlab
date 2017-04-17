@@ -66,7 +66,7 @@ function [ B, b ] = map2global( tetrahedron, node_coordinates )
         m_tetrahedron(2,n) = node_coordinates(tetrahedron(n),2);
         m_tetrahedron(3,n) = node_coordinates(tetrahedron(n),3);
     end
-    B = [m_tetrahedron(:,4)-m_tetrahedron(:,1) m_tetrahedron(:,3)-m_tetrahedron(:,1) m_tetrahedron(:,2)-m_tetrahedron(:,1)];
+    B = [m_tetrahedron(:,2)-m_tetrahedron(:,1) m_tetrahedron(:,3)-m_tetrahedron(:,1) m_tetrahedron(:,4)-m_tetrahedron(:,1)];
     b = m_tetrahedron(:,1);
 end
 
