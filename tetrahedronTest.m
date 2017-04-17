@@ -2,10 +2,6 @@ classdef tetrahedronTest < matlab.unittest.TestCase
     %TETRAHEDRONTEST 
     % Test class for testing the matrix that is returned from
     % tetrahedron2matrix function
-    % 
-    % properties defines the variables used and TestMethodSetup assigns
-    % values to those variables. The variables should be resetted after
-    % each individual test.
     
     properties (TestParameter)
         vertices = struct('vertices', randi(10, 50,  3)); % mesh with 50 vertices
