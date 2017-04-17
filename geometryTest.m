@@ -34,26 +34,27 @@ classdef geometryTest < matlab.unittest.TestCase
         % function
         function testDuplicates(testCase)
             actSolution = readMesh(testCase.mesh);
-            expSolution = unique(actSolution, 'rows');
+            actSolution = actSolution.Points;
+            expSolution = unique(actSolution, 'rows', 'stable');
             testCase.verifyEqual(actSolution, expSolution, ... 
                 "Mesh can't have duplicate vertices");
         end
         function testTxt(testCase)
             actSolution = readMesh(strcat(pwd,'\meshes\cube_nodes.txt'));
             expSolution = [0 0 0;0 0 1;0 1 0;0 1 1;1 0 0;1 0 1;1 1 0;1 1 1];
-            testCase.verifyEqual(actSolution, expSolution, ... 
+            testCase.verifyEqual(actSolution.Points, expSolution, ... 
                 ".txt input failed!");
         end
         function testObj(testCase)
             actSolution = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
             expSolution = testCase.mesh2;
-            testCase.verifyEqual(actSolution, expSolution, ... 
+            testCase.verifyEqual(actSolution.Points, expSolution, ... 
                 ".obj input failed!");
         end
         function testMatrix(testCase)
             actSolution = readMesh([1 1 -1;1 -1 -1;1 1 1;1 -1 1;-1 1 -1;-1 -1 -1;-1 1 1;-1 -1 1]);
             expSolution = [1 1 -1;1 -1 -1;1 1 1;1 -1 1;-1 1 -1;-1 -1 -1;-1 1 1;-1 -1 1];
-            testCase.verifyEqual(actSolution, expSolution, ... 
+            testCase.verifyEqual(actSolution.Points, expSolution, ... 
                 "Input of matrix/array failed!");
         end
     end
