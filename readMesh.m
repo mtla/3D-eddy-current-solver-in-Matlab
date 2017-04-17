@@ -6,9 +6,9 @@ function [ mesh ] = readMesh( source )
 %
 % input:
 %
-%          nothing: opens a dialog so user can choose a file
-%           string: tries to open that file
-%     matrix/array: directly input a mesh as [n×3] matrix
+%              nothing: opens a dialog so user can choose a file
+%               string: tries to open that file
+%         matrix/array: directly input a mesh as [n×3] matrix
 %
 % output:
 %
