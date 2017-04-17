@@ -17,6 +17,8 @@ function [ mesh ] = readMesh( source )
 %     ConnectivityList: [m×4 double]
 %          Constraints: [] (usually empty)
 %
+% More info of delaunayTriangulation here: https://se.mathworks.com/help/matlab/ref/delaunaytriangulation-class.html
+%
 
     mesh = [];    
     if (exist('source','var')==0)
