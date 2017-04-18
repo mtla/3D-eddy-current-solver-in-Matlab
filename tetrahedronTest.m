@@ -26,20 +26,6 @@ classdef tetrahedronTest < matlab.unittest.TestCase
         end
     end
     
-%     properties
-%         tetrahedron
-%         node_list
-%     end
-%     properties (TestParameter)
-%     end
-%     
-%     methods(TestMethodSetup)
-%         function createBasicTetrahedron(testCase)
-%             testCase.tetrahedron = [1 2 3 4];
-%             testCase.node_list = [0 0 0; 0 0 1; 0 1 0; 1 0 0];
-%         end
-%     end
-    
     methods (Test)
         function testDimensions(testCase, vertices, tetrahedrons)
             actSolution = size(tetrahedron2matrix(tetrahedrons, vertices));
@@ -52,6 +38,12 @@ classdef tetrahedronTest < matlab.unittest.TestCase
             expSolution = actSolution';
             testCase.verifyEqual(actSolution, expSolution, ... 
                 'The returned matrix has to be symmetric');
+        end
+        function testMappingToGlobal(testCase, tetrahedrons, vertices)
+            actSolution = map2global(tetrahedrons, vertices);
+            expSolution = ones(3);
+            testCase.verifyEqual(actSolution, expSolution, ... 
+                'The mapping of tetrahedron failed!');
         end
     end
 end
