@@ -26,9 +26,14 @@ function [ nodes ] = readDirichletNodes( source, DT )
         else % assume .txt file
             nodes_raw = readTxt(fullname);
         end
-        [node_exists, nodes] = ismember(nodes_raw, DT.Points,'rows')
+        [node_exists, nodes] = ismember(nodes_raw, DT.Points,'rows');
+        % check that all given dirichlet nodes exist in source mesh
+        if any(~node_exists) 
+            throw(MException('Input:NodeMissing','One or more of the given vertices do not exist in source mesh.'));
+        end
     elseif (ismatrix(source) && size(source,2) > 0)
-        if max(source) > size(source,2)
+        % check that no index is larger than the number of vertices in the source mesh
+        if max(source) > size(source,2) 
             throw(MException('Input:ArrayIndexOutOfBounds','Node index is larger than number of source nodes.'));
         end
         nodes = source;
