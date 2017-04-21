@@ -51,12 +51,6 @@ classdef geometryTest < matlab.unittest.TestCase
                 'MATLAB:FileIO:InvalidFid', ...
                 "Invalid filenames should raise an error!");
         end
-        function testObjCube(testCase)
-            actSolution = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
-            expSolution = [1 1 -1;1 -1 -1;1 1 1;1 -1 1;-1 1 -1;-1 -1 -1;-1 1 1;-1 -1 1];
-            testCase.verifyEqual(actSolution.Points, expSolution, ... 
-                ".obj input failed!");
-        end
         function testMeshes(testCase, meshes)
             actSolution = readMesh(meshes);
             testCase.verifyEqual(actSolution.Points, meshes, ... 
