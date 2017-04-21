@@ -1,0 +1,6 @@
+#  Node file for the vertices of a cube.
+#
+  1.0  0.0  0.0
+  1.0  0.0  1.0
+  1.0  1.0  0.0
+  1.0  1.0  1.0
