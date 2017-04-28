@@ -1,4 +1,4 @@
-function [ load_vector ] = buildLoadVector( DT ) 
+function [ load_vector ] = buildLoadVector(DT, currentDensity) 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
 % calculates the load vector for this mesh and returns it.
@@ -27,7 +27,7 @@ function [ load_vector ] = buildLoadVector( DT )
     w_quad = [.25 .25 .25 .25]/6;
     
     for row = 1:ne
-        tetrahedron = DT.ConnectivityList(row, :)
+        tetrahedron = DT.ConnectivityList(row, :);
         [B,~] = map2global(DT, row);
 %         L = tetrahedron2Lvector(DT);
 
@@ -38,7 +38,7 @@ function [ load_vector ] = buildLoadVector( DT )
             Phi = psi * Phi_ref; %shape function values at the integration point
 %             val = w1 * Phi' * abs(det(B));
             load_vector(tetrahedron') = load_vector(tetrahedron') + ...
-                w1 * Phi' * abs(det(B));
+                w1 * Phi' * abs(det(B)) * currentDensity(row);
         end
     end
 end

@@ -1,4 +1,4 @@
-function [ sMatrix ] = buildStiffnessMatrix( DT )
+function [ sMatrix ] = buildStiffnessMatrix(DT, reluctivity)
 % BUILDSTIFFNESMATRIX 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
@@ -17,7 +17,7 @@ function [ sMatrix ] = buildStiffnessMatrix( DT )
     sMatrix = zeros(max(max(DT.ConnectivityList)));
     % get rid of the for loop. Matlab does not like them that much
     for row = 1:size(DT.ConnectivityList, 1)
-        S = tetrahedron2Smatrix(DT, row);
+        S = tetrahedron2Smatrix(DT, row, reluctivity);
         tetrahedron = DT.ConnectivityList(row,:);
         for i = 1:4
             for j = 1:4
@@ -28,7 +28,7 @@ function [ sMatrix ] = buildStiffnessMatrix( DT )
     end
 end
 
-function [ S_local ] = tetrahedron2Smatrix( DT, node_coordinates )
+function [ S_local ] = tetrahedron2Smatrix(DT, node_coordinates, reluctivity )
 % TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
 % along with the position of the tetrahedron (in the struct)
 %
@@ -77,7 +77,7 @@ function [ S_local ] = tetrahedron2Smatrix( DT, node_coordinates )
     % Calculates the actual contribution of the tetrahedron by using single
     % point quadrature
     % TODO: add the contribution of the reluctivity
-    S_local = w1 * S_local * abs(det(B));
+    S_local = w1 * S_local * abs(det(B)) * reluctivity;
 end
 
 
