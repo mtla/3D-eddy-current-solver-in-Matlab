@@ -1,9 +1,10 @@
 DT = readMesh(strcat(pwd,'\meshes\long bar.obj'));
 dirichletNodes = readDirichletNodes(strcat(pwd,'\meshes\long_bar_dirichlet.obj'), DT);
+figure(1)
 tetramesh(DT); % plot mesh
 
 %reluctivity of each element [A/(Tm)]
-reluctivity = (pi*4e-7);
+reluctivity = 1/(pi*4e-7);
 np = size(DT.Points,1);
 %current density in each element [A/m^2]
 currentDensity = ones(np,1); % last element has a source current
@@ -13,7 +14,7 @@ currentDensity(dirichletNodes) = 0;
 S = buildStiffnessMatrix(DT, reluctivity);
 f = buildLoadVector(DT, currentDensity);
 
-freeNodes = setdiff(1:np, DirichletNodes); %nodes NOT in Dirichlet bnd
+freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 
 %calculating potentials in the free nodes
 Afree = S(freeNodes,freeNodes) \ f(freeNodes);
@@ -23,6 +24,6 @@ Afree = S(freeNodes,freeNodes) \ f(freeNodes);
 A_total = zeros(Np,1);
 A_total(freeNodes) = Afree
 
-figure
-scatter3(DT.Points(:,1),DT.Points(:,2),DT.Points(:,3),abs(A_total)/100+1);
+figure(2)
+scatter3(DT.Points(:,1),DT.Points(:,2),DT.Points(:,3),abs(A_total)*10^6+1);
 % tetramesh(DT.ConnectivityList, DT.Points, Afree);
