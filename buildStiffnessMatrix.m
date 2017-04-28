@@ -48,16 +48,12 @@ function [ S_local ] = tetrahedron2Smatrix( tetrahedron, node_coordinates )
 % Syntax: tetrahedron2Smatrix(tetrahedron, nodes_coordinates)
 %
     % the gradient of a 3D tetrahedron
-    % imagine it like a tetrahedron with the points:
-    % P1 = [ 0 0 0 ]
-    % P2 = [ 1 0 0 ]
-    % P3 = [ 0 1 0 ]
-    % P4 = [ 0 0 1 ]
-    % If you want to know the volume of the tetrahedron and start
-    % calculating from P1, the volume increases whether you go along the
-    % x-, y- or z-axis. If you start from the point P2, the volume will
-    % only increse if you move along the x-axis. P3, only y-axis etc.
-    % This is also constant everywhere in the tetrahedron
+    % imagine it like a tetrahedron with the points and values:
+    % P1 = 1 - x - y - z
+    % P2 = x
+    % P3 = y
+    % P4 = z
+    % When we take the gradient of this, we get
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
