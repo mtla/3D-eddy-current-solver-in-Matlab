@@ -28,9 +28,9 @@ function [ sMatrix ] = buildStiffnessMatrix( DT )
     end
 end
 
-function [ S_local ] = tetrahedron2Smatrix( tetrahedron, node_coordinates )
-% TETRAHEDRON2MATRIX This functions takes an tetrahedron, along with a list
-% of the coordinates of the nodes, as an input and outputs an 4x4 matrix
+function [ S_local ] = tetrahedron2Smatrix( DT, node_coordinates )
+% TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
+% along with the position of the tetrahedron (in the struct)
 %
 % Input:
 %       tetrahedron: 
@@ -55,7 +55,7 @@ function [ S_local ] = tetrahedron2Smatrix( tetrahedron, node_coordinates )
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
-    [B,~] = map2global(tetrahedron, node_coordinates);
+    [B,~] = map2global(DT, node_coordinates);
     gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
