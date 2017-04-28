@@ -20,7 +20,7 @@ function [ load_vector ] = buildLoadVector( DT )
     % get rid of the for loop. Matlab does not like them that much
     for row = 1:size(tetrahedrons, 1)
         tetrahedron = tetrahedrons(row, :);
-        S = tetrahedron2matrix(tetrahedron, vertices_list);
+        S = tetrahedron2Lvector(tetrahedron, vertices_list);
         for i = 1:4
             for j = 1:4
                 load_vector(tetrahedron(i), tetrahedron(j)) = ...
@@ -29,4 +29,34 @@ function [ load_vector ] = buildLoadVector( DT )
         end 
     end
 end
+
+function [ S_local ] = tetrahedron2Lvector( tetrahedron, node_coordinates )
+% TETRAHEDRON2MATRIX This functions takes an tetrahedron, along with a list
+% of the coordinates of the nodes, as an input and outputs an 4x4 matrix
+%
+% Input:
+%       tetrahedron: 
+%           array with four elements
+%       nodes_coordinates: 
+%           3xn matrix with coordinates for each vertice in
+%           the mesh
+%
+% Output:
+%       load vector:
+%           4x4 matrix with values according to the shape function
+%
+% Syntax: tetrahedron2Lvector(tetrahedron, nodes_coordinates)
+%
+    
+    %reference shape functions expressed in polynomial basis
+    Phi_ref = [1 -1 -1 -1;0 1 0 0;0 0 1 0;0 0 0 1]';
+    
+    xa = [0.5854101966249685, 0.1381966011250105, 0.1381966011250105, 0.1381966011250105]; 
+    ya = [0.1381966011250105, 0.1381966011250105, 0.1381966011250105, 0.5854101966249685];
+    za = [0.1381966011250105, 0.1381966011250105, 0.5854101966249685, 0.1381966011250105];
+    points = [xa;ya;za];
+    w_quad = [.25 .25 .25]/6;
+end
+
+
 
