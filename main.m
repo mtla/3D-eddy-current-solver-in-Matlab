@@ -9,8 +9,8 @@ reluctivity = (pi*4e-7);
 currentDensity = [ zeros(size(DT.ConnectivityList,1) - 1,1)' 1]; % last element has a source current
 %dirichletNodes;
 
-S = buildStiffnessMatrix(DT, reluctivity)
-f = buildLoadVector(DT, currentDensity)
+S = buildStiffnessMatrix(DT, reluctivity);
+f = buildLoadVector(DT, currentDensity);
 
 freeNodes = setdiff(1:size(DT.Points,1), DirichletNodes); %nodes NOT in Dirichlet bnd
 
