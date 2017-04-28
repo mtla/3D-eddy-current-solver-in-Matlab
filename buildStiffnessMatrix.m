@@ -14,13 +14,11 @@ function [ sMatrix ] = buildStiffnessMatrix( DT )
 % output: [n×n double] matrix
 %
     
-    tetrahedrons = DT.ConnectivityList;
-    vertices_list = DT.Points;
-    sMatrix = zeros(max(max(tetrahedrons)));
+    sMatrix = zeros(max(max(DT.ConnectivityList)));
     % get rid of the for loop. Matlab does not like them that much
-    for row = 1:size(tetrahedrons, 1)
-        tetrahedron = tetrahedrons(row, :);
-        S = tetrahedron2Smatrix(tetrahedron, vertices_list);
+    for row = 1:size(DT.ConnectivityList, 1)
+        S = tetrahedron2Smatrix(DT, row);
+        tetrahedron = DT.ConnectivityList(row,:);
         for i = 1:4
             for j = 1:4
                 sMatrix(tetrahedron(i), tetrahedron(j)) = ...
