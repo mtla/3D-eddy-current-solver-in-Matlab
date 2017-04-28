@@ -1,4 +1,4 @@
-function [ S_local ] = tetrahedron2matrix( tetrahedron, node_coordinates )
+function [ S_local ] = tetrahedron2Smatrix( tetrahedron, node_coordinates )
 % TETRAHEDRON2MATRIX This functions takes an tetrahedron, along with a list
 % of the coordinates of the nodes, as an input and outputs an 4x4 matrix
 %
@@ -10,10 +10,10 @@ function [ S_local ] = tetrahedron2matrix( tetrahedron, node_coordinates )
 %           the mesh
 %
 % Output:
-%       tetrahedron_matrix:
+%       Local S-matrix:
 %           4x4 matrix with values according to the shape function
 %
-% Syntax: tetrahedron2matrix(tetrahedron, nodes_coordinates)
+% Syntax: tetrahedron2Smatrix(tetrahedron, nodes_coordinates)
 %
     % the gradient of a 3D tetrahedron
     % imagine it like a tetrahedron with the points:
