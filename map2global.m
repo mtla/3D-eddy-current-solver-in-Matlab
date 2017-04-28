@@ -1,7 +1,8 @@
-function [ B, b ] = map2global( tetrahedron, node_coordinates ) 
+function [ B, b ] = map2global(DT, element ) 
 % Maps a single tetrahedron to the global unit tetrahedron so that
 % g_global = B*x_ref + b
-
+    node_coordinates = DT.Points;
+    tetrahedron = DT.ConnectivityList(element,:);
     % build the tetrahedron matrix so that
     % matrix = [x_1...x_4 ; y_1...y_4 ; z_1...z_4]
     m_tetrahedron = zeros(3,4);
