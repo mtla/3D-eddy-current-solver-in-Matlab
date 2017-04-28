@@ -1,8 +1,7 @@
-function [ load_vector ] = buildLoadVector( DT )
-% BUILDSTIFFNESMATRIX 
+function [ load_vector ] = buildLoadVector( DT ) 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
-% calculates the stiffness matrix for this mesh and returns it.
+% calculates the load vector for this mesh and returns it.
 %
 % input:
 %
@@ -13,50 +12,33 @@ function [ load_vector ] = buildLoadVector( DT )
 %
 % output: [n×n double] matrix
 %
-    
-    tetrahedrons = DT.ConnectivityList;
-    vertices_list = DT.Points;
-    load_vector = zeros(max(max(tetrahedrons)));
+    np = size(DT.Points, 1); % number of points
+    ne = size(DT.ConnectivityList, 1); % number of tetrahedrons
+    load_vector = zeros(np,1)
     % get rid of the for loop. Matlab does not like them that much
-    for row = 1:size(tetrahedrons, 1)
-        tetrahedron = tetrahedrons(row, :);
-        S = tetrahedron2Lvector(tetrahedron, vertices_list);
-        for i = 1:4
-            for j = 1:4
-                load_vector(tetrahedron(i), tetrahedron(j)) = ...
-                   load_vector(tetrahedron(i), tetrahedron(j)) +  S(i,j);
-            end
-        end 
-    end
-end
-
-function [ S_local ] = tetrahedron2Lvector( tetrahedron, node_coordinates )
-% TETRAHEDRON2MATRIX This functions takes an tetrahedron, along with a list
-% of the coordinates of the nodes, as an input and outputs an 4x4 matrix
-%
-% Input:
-%       tetrahedron: 
-%           array with four elements
-%       nodes_coordinates: 
-%           3xn matrix with coordinates for each vertice in
-%           the mesh
-%
-% Output:
-%       load vector:
-%           4x4 matrix with values according to the shape function
-%
-% Syntax: tetrahedron2Lvector(tetrahedron, nodes_coordinates)
-%
     
     %reference shape functions expressed in polynomial basis
     Phi_ref = [1 -1 -1 -1;0 1 0 0;0 0 1 0;0 0 0 1]';
-    
+
     xa = [0.5854101966249685, 0.1381966011250105, 0.1381966011250105, 0.1381966011250105]; 
     ya = [0.1381966011250105, 0.1381966011250105, 0.1381966011250105, 0.5854101966249685];
     za = [0.1381966011250105, 0.1381966011250105, 0.5854101966249685, 0.1381966011250105];
-    points = [xa;ya;za];
-    w_quad = [.25 .25 .25]/6;
+    quad_points = [xa;ya;za];
+    w_quad = [.25 .25 .25 .25]/6;
+    
+    for row = 1:ne
+        tetrahedron = DT.ConnectivityList(row, :)
+        [B,~] = map2global(DT, row);
+%         L = tetrahedron2Lvector(DT);
+
+        %looping over the integration points
+        for k_quad = 1:4
+            w1 = w_quad(k_quad);
+            psi = [1 quad_points(1,k_quad) quad_points(2,k_quad) quad_points(3,k_quad)]; %polynomial basis at the integration point
+            Phi = psi * Phi_ref; %shape function values at the integration point
+%             val = w1 * Phi' * abs(det(B));
+            load_vector(tetrahedron') = load_vector(tetrahedron') + ...
+                w1 * Phi' * abs(det(B));
+        end
+    end
 end
-
-
-
