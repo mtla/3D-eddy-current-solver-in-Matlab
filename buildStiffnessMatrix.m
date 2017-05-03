@@ -1,4 +1,4 @@
-function [ sMatrix ] = buildStiffnessMatrix(DT, reluctivity)
+function [ sMatrixNodes ] = buildStiffnessMatrix(DT, reluctivity)
 % BUILDSTIFFNESMATRIX 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
@@ -14,15 +14,15 @@ function [ sMatrix ] = buildStiffnessMatrix(DT, reluctivity)
 % output: [n×n double] matrix
 %
     
-    sMatrix = zeros(max(max(DT.ConnectivityList)));
+    sMatrixNodes = zeros(max(max(DT.ConnectivityList)));
     % get rid of the for loop. Matlab does not like them that much
     for row = 1:size(DT.ConnectivityList, 1)
         S = tetrahedron2Smatrix(DT, row, reluctivity);
         tetrahedron = DT.ConnectivityList(row,:);
         for i = 1:4
             for j = 1:4
-                sMatrix(tetrahedron(i), tetrahedron(j)) = ...
-                   sMatrix(tetrahedron(i), tetrahedron(j)) +  S(i,j);
+                sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
+                   sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  S(i,j);
             end
         end 
     end
