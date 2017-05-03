@@ -1,5 +1,5 @@
 DT = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
-dirichletNodes = readDirichletNodes(DT);
+dirichletNodes = readDirichletNodes(DT, strcat(pwd,'\meshes\example_mesh_3D_dirichlet.obj'));
 figure(1)
 tetramesh(DT); % plot mesh
 
