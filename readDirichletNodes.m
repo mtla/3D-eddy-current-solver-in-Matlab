@@ -1,4 +1,4 @@
-function [ nodes ] = readDirichletNodes( source, DT )
+function [ nodes ] = readDirichletNodes( DT, source )
 % This function inputs vertices either in an .obj file, .txt file
 % or an matrix/array. It then evaluates if the given vertices match the
 % ones in the actual mesh and stores their order in a vector.

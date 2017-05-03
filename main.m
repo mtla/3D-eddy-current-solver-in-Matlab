@@ -1,5 +1,5 @@
-DT = readMesh(strcat(pwd,'\meshes\long bar.obj'));
-dirichletNodes = readDirichletNodes(strcat(pwd,'\meshes\long_bar_dirichlet.obj'), DT);
+DT = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
+dirichletNodes = readDirichletNodes(DT);
 figure(1)
 tetramesh(DT); % plot mesh
 
@@ -22,7 +22,7 @@ Afree = S(freeNodes,freeNodes) \ f(freeNodes);
 
 %assembling solution in the entire region
 A_total = zeros(Np,1);
-A_total(freeNodes) = Afree
+A_total(freeNodes) = Afree;
 
 figure(2)
 scatter3(DT.Points(:,1),DT.Points(:,2),DT.Points(:,3),abs(A_total)*10^6+1);
