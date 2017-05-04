@@ -3,6 +3,8 @@ dirichletNodes = readDirichletNodes(DT, strcat(pwd,'\meshes\example_mesh_3D_diri
 figure(1)
 tetramesh(DT); % plot mesh
 
+
+
 %reluctivity of each element [A/(Tm)]
 reluctivity = 1/(pi*4e-7);
 np = size(DT.Points,1);
@@ -21,7 +23,7 @@ Afree = S(freeNodes,freeNodes) \ f(freeNodes);
 % NOTE: this is equivalent to Afree = inv(S) * f, but much faster
 
 %assembling solution in the entire region
-A_total = zeros(Np,1);
+A_total = zeros(np,1);
 A_total(freeNodes) = Afree;
 
 figure(2)
