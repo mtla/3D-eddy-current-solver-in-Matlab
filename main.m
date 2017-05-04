@@ -1,20 +1,20 @@
-DT = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
-dirichletNodes = readDirichletNodes(DT, strcat(pwd,'\meshes\example_mesh_3D_dirichlet.obj'));
+msh = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
+dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\example_mesh_3D_dirichlet.obj'));
 figure(1)
-tetramesh(DT); % plot mesh
+tetramesh(msh); % plot mesh
 
 
 
 %reluctivity of each element [A/(Tm)]
 reluctivity = 1/(pi*4e-7);
-np = size(DT.Points,1);
+np = size(msh.Points,1);
 %current density in each element [A/m^2]
 currentDensity = ones(np,1); % last element has a source current
 currentDensity(dirichletNodes) = 0;
 %dirichletNodes;
 
-S = buildStiffnessMatrix(DT, reluctivity);
-f = buildLoadVector(DT, currentDensity);
+S = buildStiffnessMatrix(msh, reluctivity);
+f = buildLoadVector(msh, currentDensity);
 
 freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 
@@ -27,5 +27,5 @@ A_total = zeros(np,1);
 A_total(freeNodes) = Afree;
 
 figure(2)
-scatter3(DT.Points(:,1),DT.Points(:,2),DT.Points(:,3),abs(A_total)*10^6+1);
-% tetramesh(DT.ConnectivityList, DT.Points, Afree);
+scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),abs(A_total)*10^6+1);
+% tetramesh(msh.ConnectivityList, msh.Points, Afree);

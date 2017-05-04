@@ -1,20 +1,20 @@
 classdef msh
-    %MSH Summary of this class goes here
-    %   Detailed explanation goes here
+    % Because matlab does not allow us to extend the delaunayTriangulation
+    % class we just create our own class and add functionality to it.
     
     properties
         DT
         Points
-        ConnectivityList
+        TetrahedronsByPoints
         Edges
-        tetrahedron_edges
+        TetrahedronsByEdges
     end
     
     methods
         function obj = msh(vertices)
             obj.DT = delaunayTriangulation(vertices);
             obj.Points = obj.DT.Points;
-            obj.ConnectivityList = obj.DT.ConnectivityList;
+            obj.TetrahedronsByPoints = obj.DT.ConnectivityList;
             obj.Edges = edges(obj.DT);
         end
         function tetramesh(obj)
