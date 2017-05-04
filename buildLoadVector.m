@@ -14,7 +14,7 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
 %
     np = size(msh.Points, 1); % number of points
     ne = size(msh.TetrahedronsByPoints, 1); % number of tetrahedrons
-    load_vector = zeros(np,1)
+    load_vector = zeros(np,1);
     % get rid of the for loop. Matlab does not like them that much
     
     %reference shape functions expressed in polynomial basis

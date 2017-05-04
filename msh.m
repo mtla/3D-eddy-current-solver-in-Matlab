@@ -15,11 +15,13 @@ classdef msh
             obj.DT = delaunayTriangulation(vertices);
             obj.Points = obj.DT.Points;
             obj.TetrahedronsByPoints = obj.DT.ConnectivityList;
+%             obj.TetrahedronsByPoints = obj.removeDuplicateTetrahedrons();
             obj.Edges = edges(obj.DT);
             obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
         end
         function tetramesh(obj)
-            tetramesh(obj.DT)
+            tetramesh(obj.TetrahedronsByPoints, obj.Points)
+%             tetramesh(obj.DT)
         end
         function p = points(obj)
             p = obj.Points;
@@ -27,20 +29,34 @@ classdef msh
         function e = edges(obj)
             e = obj.Edges;
         end
-%         function s = size(obj)
-%             s = [size(obj.Points); size(obj.Edges); size(obj.TetrahedronsByPoints)];
-%         end
-    end
-    methods(Access = private)
+        function np = np(obj) % number of points in mesh
+            np = size(obj.Points,1);
+        end
+        function ne = ne(obj) % number of elements (=tetrahedrons) in mesh
+            ne = size(obj.TetrahedronsByPoints, 1);
+        end
+%     end
+%     methods(Access = private)
         function tbe = tetrahedrons2edges(obj)
-            n = size(obj.TetrahedronsByPoints, 1); % number of tetrahedrons
+            n = obj.ne(); % number of tetrahedrons
             tbe = zeros(n, 6); % ugly. What could the number of edges 
             for row = 1:n
                 tetrahedron = obj.TetrahedronsByPoints(row,:);
                 pairs = combnk(tetrahedron,2);
-                [~,b] = ismember(pairs, obj.Edges, 'rows')
-                [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows')
+                [~,b] = ismember(pairs, obj.Edges, 'rows');
+                [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
                 tbe(row,:) = b' + tmp';
+            end
+        end
+        function tetrahedrons = removeDuplicateTetrahedrons(obj)
+            tetrahedrons = obj.DT.ConnectivityList;
+%             a = (1:obj.np())';
+%             occurence = histc(obj.TetrahedronsByPoints(:),a);
+            for n = 1:size(tetrahedrons,1)
+%                 n
+%                 obj.ne()
+                [rows,~] = find(tetrahedrons==n,size(tetrahedrons,1),'first')
+                tetrahedrons(rows(5:end),:) = [];
             end
         end
     end
