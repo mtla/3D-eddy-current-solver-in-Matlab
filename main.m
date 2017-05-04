@@ -27,5 +27,5 @@ A_total = zeros(np,1);
 A_total(freeNodes) = Afree;
 
 figure(2)
-scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),abs(A_total)*10^6+1);
+scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),abs(A_total)*10^9+1);
 % tetramesh(msh.ConnectivityList, msh.Points, Afree);
