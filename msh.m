@@ -33,14 +33,14 @@ classdef msh
     end
     methods(Access = private)
         function tbe = tetrahedrons2edges(obj)
-            tbe = [];%zeros(size(obj.Edges,1));
-            for row = 1:size(obj.TetrahedronsByPoints, 1)
+            n = size(obj.TetrahedronsByPoints, 1); % number of tetrahedrons
+            tbe = zeros(n, 6); % ugly. What could the number of edges 
+            for row = 1:n
                 tetrahedron = obj.TetrahedronsByPoints(row,:);
                 pairs = combnk(tetrahedron,2);
-                [~,indexes] = ismember(pairs, obj.Edges, 'rows');
-                [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
-                indexes = indexes + tmp;
-                tbe = [tbe; indexes'];
+                [~,b] = ismember(pairs, obj.Edges, 'rows')
+                [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows')
+                tbe(row,:) = b' + tmp';
             end
         end
     end
