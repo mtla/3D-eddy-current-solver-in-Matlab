@@ -1,8 +1,8 @@
-% msh = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
-% dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\example_mesh_3D_dirichlet.obj'));
+msh = readMesh(strcat(pwd,'\meshes\example_mesh_3D.obj'));
+dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\example_mesh_3D_dirichlet.obj'));
 
-msh = readMesh(strcat(pwd,'\meshes\long_bar.obj'));
-dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\long_bar_dirichlet.obj'));
+% msh = readMesh(strcat(pwd,'\meshes\long_bar.obj'));
+% dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\long_bar_dirichlet.obj'));
 figure(1)
 tetramesh(msh); % plot mesh
 
@@ -16,13 +16,13 @@ currentDensity = ones(np,1); % last element has a source current
 currentDensity(dirichletNodes) = 0;
 %dirichletNodes;
 
-S = buildStiffnessMatrix(msh, reluctivity);
+[St Se] = buildStiffnessMatrix(msh, reluctivity);
 f = buildLoadVector(msh, currentDensity);
 
 freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 
 %calculating potentials in the free nodes
-Afree = S(freeNodes,freeNodes) \ f(freeNodes);
+Afree = St(freeNodes,freeNodes) \ f(freeNodes);
 % NOTE: this is equivalent to Afree = inv(S) * f, but much faster
 
 %assembling solution in the entire region

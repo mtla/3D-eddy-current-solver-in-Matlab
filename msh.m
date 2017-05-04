@@ -32,13 +32,16 @@ classdef msh
         function np = np(obj) % number of points in mesh
             np = size(obj.Points,1);
         end
-        function ne = ne(obj) % number of elements (=tetrahedrons) in mesh
-            ne = size(obj.TetrahedronsByPoints, 1);
+        function ne = ne(obj) % number of edges in mesh
+            ne = size(obj.Edges,1);
+        end
+        function nt = nt(obj) % number of tetrahedrons in mesh
+            nt = size(obj.TetrahedronsByPoints, 1);
         end
 %     end
 %     methods(Access = private)
         function tbe = tetrahedrons2edges(obj)
-            n = obj.ne(); % number of tetrahedrons
+            n = obj.nt(); % number of tetrahedrons
             tbe = zeros(n, 6); % ugly. What could the number of edges 
             for row = 1:n
                 tetrahedron = obj.TetrahedronsByPoints(row,:);
@@ -55,7 +58,7 @@ classdef msh
             for n = 1:size(tetrahedrons,1)
 %                 n
 %                 obj.ne()
-                [rows,~] = find(tetrahedrons==n,size(tetrahedrons,1),'first')
+                [rows,~] = find(tetrahedrons==n,size(tetrahedrons,1),'first');
                 tetrahedrons(rows(5:end),:) = [];
             end
         end
