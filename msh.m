@@ -58,12 +58,8 @@ classdef msh
 
         function tbe = tetrahedrons2edges(obj)
             n = obj.nt(); % number of tetrahedrons
-            tbe = zeros(n, 6); % ugly. What could the number of edges 
+            tbe = zeros(n, 6); 
             for row = 1:n
-%                 tetrahedron = obj.TetrahedronsByPoints(row,:);
-%                 pairs = combnk(tetrahedron,2);
-%                 [~,b] = ismember(pairs, obj.Edges, 'rows');
-%                 [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
                 tbe(row,:) = obj.tetrahedron2edges(row);
             end
         end

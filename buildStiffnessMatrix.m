@@ -15,34 +15,38 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
 %
     
     sMatrixNodes = zeros(msh.np());
+    sMatrixEdges = zeros(msh.ne());
     % get rid of the for loop. Matlab does not like them that much
-    for row = 1:size(msh.nt(), 1)
-        S = points2Smatrix(msh, row);
-        tetrahedron = msh.TetrahedronsByPoints(row,:);
+    % tID stands for tetrahedron ID. That is, where in the
+    % msh.TetrahedronsByPoints array the tetrahedron is
+    for tID = 1:size(msh.nt(), 1)
+        % we can calculate the affine transformation 
+        [B,~] = map2global(msh, tID);
+        S = points2Smatrix(B);
+        tetrahedron = msh.TetrahedronsByPoints(tID,:);
         for i = 1:4
             for j = 1:4
                 sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
                    sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  S(i,j);
             end
         end
+        Sedges = edges2Smatrix(B);
     end
     sMatrixNodes = sMatrixNodes * reluctivity;
-    
-    sMatrixEdges = zeros(msh.ne());
-    for row = 1:size(msh.nt(),1)
-        S = edges2Smatrix(msh, row);
-        tetrahedron = msh.TetrahedronsByEdges(row,:);
-        for i = 1:4
-            for j = 1:4
-                sMatrixEdges(tetrahedron(i), tetrahedron(j)) = ...
-                   sMatrixEdges(tetrahedron(i), tetrahedron(j)) +  S(i,j);
-            end
-        end
-    end
+%     for row = 1:size(msh.nt(),1)
+%         S = edges2Smatrix(msh, row);
+%         tetrahedron = msh.TetrahedronsByEdges(row,:);
+%         for i = 1:4
+%             for j = 1:4
+%                 sMatrixEdges(tetrahedron(i), tetrahedron(j)) = ...
+%                    sMatrixEdges(tetrahedron(i), tetrahedron(j)) +  S(i,j);
+%             end
+%         end
+%     end
     
 end
 
-function [ S_local ] = points2Smatrix(msh, node_coordinates)
+function [ S_local ] = points2Smatrix(B)
 % TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
 % along with the position of the tetrahedron (in the struct)
 %
@@ -69,7 +73,7 @@ function [ S_local ] = points2Smatrix(msh, node_coordinates)
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
-    [B,~] = map2global(msh, node_coordinates);
+%     [B,~] = map2global(msh, node_coordinates);
     gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
@@ -94,10 +98,8 @@ function [ S_local ] = points2Smatrix(msh, node_coordinates)
     S_local = w1 * S_local * abs(det(B));
 end
 
-function [ S_local ] = edges2Smatrix(msh, edges)
+function [ S_local ] = edges2Smatrix(B)
+%     edges
     S_local = zeros(6);
-    [B,~] = map2global(msh, edges);
+%     [B,~] = map2global(msh, edges);
 end
-
-
-
