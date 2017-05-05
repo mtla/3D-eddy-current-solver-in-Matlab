@@ -17,7 +17,7 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
     sMatrixNodes = zeros(msh.np());
     % get rid of the for loop. Matlab does not like them that much
     for row = 1:size(msh.nt(), 1)
-        S = points2Smatrix(msh, row, reluctivity);
+        S = points2Smatrix(msh, row);
         tetrahedron = msh.TetrahedronsByPoints(row,:);
         for i = 1:4
             for j = 1:4
@@ -26,10 +26,11 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
             end
         end 
     end
+    sMatrixNodes = sMatrixNodes * reluctivity;
     
     sMatrixEdges = zeros(msh.ne());
     for row = 1:size(msh.nt(),1)
-        S = edges2Smatrix(msh, row, reluctivity);
+        S = edges2Smatrix(msh, row);
         tetrahedron = msh.TetrahedronsByEdges(row,:);
         for i = 1:4
             for j = 1:4
@@ -41,7 +42,7 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
     
 end
 
-function [ S_local ] = points2Smatrix(msh, node_coordinates, reluctivity )
+function [ S_local ] = points2Smatrix(msh, node_coordinates)
 % TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
 % along with the position of the tetrahedron (in the struct)
 %
@@ -68,7 +69,7 @@ function [ S_local ] = points2Smatrix(msh, node_coordinates, reluctivity )
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
-    [B,~] = map2global(msh, node_coordinates);
+    [B,~] = map2global(msh, node_coordinates, 4);
     gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
@@ -90,10 +91,10 @@ function [ S_local ] = points2Smatrix(msh, node_coordinates, reluctivity )
     % Calculates the actual contribution of the tetrahedron by using single
     % point quadrature
     % TODO: add the contribution of the reluctivity
-    S_local = w1 * S_local * abs(det(B)) * reluctivity;
+    S_local = w1 * S_local * abs(det(B));
 end
 
-function [ S_local ] = edges2Smatrix(msh, edges, reluctivity)
+function [ S_local ] = edges2Smatrix(msh, edges)
     S_local = zeros(6);
 end
 
