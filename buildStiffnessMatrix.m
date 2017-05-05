@@ -1,4 +1,4 @@
-function [ sMatrixNodes ] = buildStiffnessMatrix(DT, reluctivity)
+function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
 % BUILDSTIFFNESMATRIX 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
@@ -8,17 +8,17 @@ function [ sMatrixNodes ] = buildStiffnessMatrix(DT, reluctivity)
 %
 %   delaunayTriangulation with properties:
 %               Points: [n×3 double]
-%     ConnectivityList: [m×4 double]
+%     TetrahedronsByPoints: [m×4 double]
 %          Constraints: [] (usually empty)
 %
 % output: [n×n double] matrix
 %
     
-    sMatrixNodes = zeros(max(max(DT.ConnectivityList)));
+    sMatrixNodes = zeros(msh.np());
     % get rid of the for loop. Matlab does not like them that much
-    for row = 1:size(DT.ConnectivityList, 1)
-        S = tetrahedron2Smatrix(DT, row, reluctivity);
-        tetrahedron = DT.ConnectivityList(row,:);
+    for row = 1:size(msh.nt(), 1)
+        S = points2Smatrix(msh, row);
+        tetrahedron = msh.TetrahedronsByPoints(row,:);
         for i = 1:4
             for j = 1:4
                 sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
@@ -26,9 +26,23 @@ function [ sMatrixNodes ] = buildStiffnessMatrix(DT, reluctivity)
             end
         end 
     end
+    sMatrixNodes = sMatrixNodes * reluctivity;
+    
+    sMatrixEdges = zeros(msh.ne());
+    for row = 1:size(msh.nt(),1)
+        S = edges2Smatrix(msh, row);
+        tetrahedron = msh.TetrahedronsByEdges(row,:);
+        for i = 1:4
+            for j = 1:4
+                sMatrixEdges(tetrahedron(i), tetrahedron(j)) = ...
+                   sMatrixEdges(tetrahedron(i), tetrahedron(j)) +  S(i,j);
+            end
+        end
+    end
+    
 end
 
-function [ S_local ] = tetrahedron2Smatrix(DT, node_coordinates, reluctivity )
+function [ S_local ] = points2Smatrix(msh, node_coordinates)
 % TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
 % along with the position of the tetrahedron (in the struct)
 %
@@ -55,12 +69,12 @@ function [ S_local ] = tetrahedron2Smatrix(DT, node_coordinates, reluctivity )
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
-    [B,~] = map2global(DT, node_coordinates);
+    [B,~] = map2global(msh, node_coordinates, 4);
     gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first
-    S_local = zeros(4,4);
+    S_local = zeros(4);
     S_local(1,2) = gradPhi(:,1)' * gradPhi(:,2);
     S_local(1,3) = gradPhi(:,1)' * gradPhi(:,3);
     S_local(1,4) = gradPhi(:,1)' * gradPhi(:,4);
@@ -77,7 +91,11 @@ function [ S_local ] = tetrahedron2Smatrix(DT, node_coordinates, reluctivity )
     % Calculates the actual contribution of the tetrahedron by using single
     % point quadrature
     % TODO: add the contribution of the reluctivity
-    S_local = w1 * S_local * abs(det(B)) * reluctivity;
+    S_local = w1 * S_local * abs(det(B));
+end
+
+function [ S_local ] = edges2Smatrix(msh, edges)
+    S_local = zeros(6);
 end
 
 

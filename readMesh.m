@@ -36,6 +36,6 @@ function [ mesh ] = readMesh( source )
     elseif (ismatrix(source) && size(source,2) > 2)
         mesh = source;
     end
-    mesh = delaunayTriangulation(mesh);
+    mesh = msh(mesh);
 end
 
