@@ -1,6 +1,7 @@
 classdef msh
-    % Because matlab does not allow us to extend the delaunayTriangulation
-    % class we just create our own class and add functionality to it.
+    % We just create our own class and add functionality to it because 
+    % matlab does not allow us to extend the delaunayTriangulation
+    % class.
     
     properties
         DT
@@ -38,17 +39,32 @@ classdef msh
         function nt = nt(obj) % number of tetrahedrons in mesh
             nt = size(obj.TetrahedronsByPoints, 1);
         end
+        function edge = getEdge(obj, edgeID)
+            edge = obj.Edges(edgeID,:);
+        end
+        function coordinates = getEdgeCoordinates(obj, edgeID)
+            edge = obj.getEdge(edgeID);
+            coordinates = obj.Points(edge,:)';
+        end
+        function edges = tetrahedron2edges(obj, tetrahedronID)
+            tetrahedron = obj.TetrahedronsByPoints(tetrahedronID,:);
+            pairs = combnk(tetrahedron,2);
+            [~,b] = ismember(pairs, obj.Edges, 'rows');
+            [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
+            edges = b' + tmp';
+        end
 %     end
 %     methods(Access = private)
+
         function tbe = tetrahedrons2edges(obj)
             n = obj.nt(); % number of tetrahedrons
             tbe = zeros(n, 6); % ugly. What could the number of edges 
             for row = 1:n
-                tetrahedron = obj.TetrahedronsByPoints(row,:);
-                pairs = combnk(tetrahedron,2);
-                [~,b] = ismember(pairs, obj.Edges, 'rows');
-                [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
-                tbe(row,:) = b' + tmp';
+%                 tetrahedron = obj.TetrahedronsByPoints(row,:);
+%                 pairs = combnk(tetrahedron,2);
+%                 [~,b] = ismember(pairs, obj.Edges, 'rows');
+%                 [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
+                tbe(row,:) = obj.tetrahedron2edges(row);
             end
         end
         function tetrahedrons = removeDuplicateTetrahedrons(obj)
