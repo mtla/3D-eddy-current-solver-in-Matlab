@@ -6,14 +6,15 @@ dirichletNodes = readDirichletNodes(msh, strcat(pwd,'\meshes\example_mesh_3D_dir
 figure(1)
 tetramesh(msh); % plot mesh
 
-
+permeability = 10;
+permittivity = 10;
 
 %reluctivity of each element [A/(Tm)]
 reluctivity = 1/(pi*4e-7);
 np = size(msh.Points,1);
 %current density in each element [A/m^2]
-currentDensity = ones(np,1); % last element has a source current
-currentDensity(dirichletNodes) = 0;
+% currentDensity = ones(np,1); % last element has a source current
+% currentDensity(dirichletNodes) = 0;
 %dirichletNodes;
 
 [St Se] = buildStiffnessMatrix(msh, reluctivity);
