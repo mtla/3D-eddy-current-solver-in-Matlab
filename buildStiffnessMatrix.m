@@ -24,7 +24,7 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
                 sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
                    sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  S(i,j);
             end
-        end 
+        end
     end
     sMatrixNodes = sMatrixNodes * reluctivity;
     
@@ -69,7 +69,7 @@ function [ S_local ] = points2Smatrix(msh, node_coordinates)
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
 
-    [B,~] = map2global(msh, node_coordinates, 4);
+    [B,~] = map2global(msh, node_coordinates);
     gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
@@ -96,6 +96,7 @@ end
 
 function [ S_local ] = edges2Smatrix(msh, edges)
     S_local = zeros(6);
+    [B,~] = map2global(msh, edges);
 end
 
 

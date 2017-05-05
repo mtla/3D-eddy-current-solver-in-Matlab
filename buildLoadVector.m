@@ -28,7 +28,7 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
     
     for row = 1:ne
         tetrahedron = msh.TetrahedronsByPoints(row, :);
-        [B,~] = map2global(msh, row, 4);
+        [B,~] = map2global(msh, row);
 %         L = tetrahedron2Lvector(msh);
 
         %looping over the integration points
