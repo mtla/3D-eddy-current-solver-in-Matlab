@@ -5,12 +5,12 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
 %
 % input:
 %
-%   delaunayTriangulation with properties:
-%               Points: [n×3 double]
+%   msh with properties:
+%                   Points: [n×3 double]
 %     TetrahedronsByPoints: [m×4 double]
-%          Constraints: [] (usually empty)
+%              Constraints: [] (usually empty)
 %
-% output: [n×n double] matrix
+% output: [n×1 double] matrix
 %
     np = size(msh.Points, 1); % number of points
     ne = size(msh.TetrahedronsByPoints, 1); % number of tetrahedrons
