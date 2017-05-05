@@ -38,7 +38,7 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
             Phi = psi * Phi_ref; %shape function values at the integration point
 %             val = w1 * Phi' * abs(det(B));
             load_vector(tetrahedron') = load_vector(tetrahedron') + ...
-                w1 * Phi' * abs(det(B)) * currentDensity(row);
+                w1 * Phi' * abs(det(B));
         end
     end
 end
