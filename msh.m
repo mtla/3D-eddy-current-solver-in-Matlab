@@ -24,6 +24,10 @@ classdef msh
             tetramesh(obj.TetrahedronsByPoints, obj.Points)
 %             tetramesh(obj.DT)
         end
+        function f = plot3(obj, msh, values)
+            e = obj.getEdgeCoordinates(1:19)';
+            plot3(e(:,1),e(:,2),e(:,3));
+        end
         function p = points(obj)
             p = obj.Points;
         end
