@@ -19,17 +19,18 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
     % get rid of the for loop. Matlab does not like them that much
     % tID stands for tetrahedron ID. That is, where in the
     % msh.TetrahedronsByPoints array the tetrahedron is
-    for tID = 1:size(msh.nt(), 1)
+    for tID = 1:msh.nt()
         % we can calculate the affine transformation 
         [B,~] = map2global(msh, tID);
         S = points2Smatrix(B);
-        tetrahedron = msh.TetrahedronsByPoints(tID,:);
+        tetrahedron = msh.tetrahedron2points(tID)
         for i = 1:4
             for j = 1:4
                 sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
                    sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  S(i,j);
             end
         end
+        edges = msh.tetrahedron2edges(tID);
         Sedges = edges2Smatrix(B);
     end
     sMatrixNodes = sMatrixNodes * reluctivity;
@@ -74,7 +75,7 @@ function [ S_local ] = points2Smatrix(B)
     w1 = 0.5; %integration weight for the single-point quadrature
 
 %     [B,~] = map2global(msh, node_coordinates);
-    gradPhi = (B') \ gradPhi_ref; %gradients of shape functions of the GLOBAL element
+    gradPhi = (B') \ gradPhi_ref %gradients of shape functions of the GLOBAL element
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first

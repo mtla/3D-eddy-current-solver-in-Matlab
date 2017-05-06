@@ -46,6 +46,9 @@ classdef msh
             edge = obj.getEdge(edgeID);
             coordinates = obj.Points(edge,:)';
         end
+        function points = tetrahedron2points(obj, tetrahedronID)
+            points = obj.TetrahedronsByPoints(tetrahedronID,:);
+        end
         function edges = tetrahedron2edges(obj, tetrahedronID)
             tetrahedron = obj.TetrahedronsByPoints(tetrahedronID,:);
             pairs = combnk(tetrahedron,2);
