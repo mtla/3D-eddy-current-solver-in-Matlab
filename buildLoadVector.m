@@ -1,4 +1,4 @@
-function [ LvectorNodes, LvectorEdges ] = buildLoadVector(msh, currentDensity) 
+function [ LvectorNodes, LvectorEdges ] = buildLoadVector(msh) 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
 % calculates the load vector for this mesh and returns it.
@@ -14,7 +14,7 @@ function [ LvectorNodes, LvectorEdges ] = buildLoadVector(msh, currentDensity)
 %
 
     LvectorNodes = zeros(msh.np(), 1);
-    LvectorEdges = zeros(msh.ne(), 1)
+    LvectorEdges = zeros(msh.ne(), 1);
     
     %reference shape functions expressed in polynomial basis
     Phi_ref = [1 -1 -1 -1;0 1 0 0;0 0 1 0;0 0 0 1]';
@@ -39,7 +39,7 @@ function [ LvectorNodes, LvectorEdges ] = buildLoadVector(msh, currentDensity)
     
     for row = 1:msh.nt()
         tetrahedron = msh.TetrahedronsByPoints(row, :);
-        edges = msh.tetrahedron2edges(row)
+        edges = msh.tetrahedron2edges(row);
 %         L = tetrahedron2Lvector(msh);
         [B,~] = map2global(msh, row);
 

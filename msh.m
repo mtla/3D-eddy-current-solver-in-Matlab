@@ -41,6 +41,23 @@ classdef msh
                end
            end
         end
+        function scatter3(obj, values)
+           % normalize values
+           if (exist('values','var')==1)
+               range = max(values) - min(values);
+               values = (values - min(values)) / range;
+           end
+           for ne = 1:obj.np()
+               hold on
+               node = obj.Points;
+               if (exist('values','var')==1)
+                   color = [values(ne) 0 1-values(ne)];
+                   scatter3(node(:,1),node(:,2),node(:,3),'MarkerFaceColor', color);
+               else
+                   scatter3(node(:,1),node(:,2),node(:,3));
+               end
+           end
+        end
         function p = points(obj)
             p = obj.Points;
         end
