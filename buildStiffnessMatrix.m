@@ -22,18 +22,25 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
     for tID = 1:msh.nt()
         % we can calculate the affine transformation 
         [B,~] = map2global(msh, tID);
-        S = points2Smatrix(B);
-        tetrahedron = msh.tetrahedron2points(tID)
+        Snodes = points2Smatrix(B);
+        tetrahedron = msh.tetrahedron2points(tID);
         for i = 1:4
             for j = 1:4
                 sMatrixNodes(tetrahedron(i), tetrahedron(j)) = ...
-                   sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  S(i,j);
+                   sMatrixNodes(tetrahedron(i), tetrahedron(j)) +  Snodes(i,j);
             end
         end
         edges = msh.tetrahedron2edges(tID);
         Sedges = edges2Smatrix(B);
+        for i = 1:6
+            for j = 1:6
+                sMatrixEdges(edges(i), edges(j)) = ...
+                   sMatrixEdges(edges(i), edges(j)) +  Sedges(i,j);
+            end
+        end
     end
     sMatrixNodes = sMatrixNodes * reluctivity;
+    sMatrixEdges = sMatrixEdges * reluctivity;
 %     for row = 1:size(msh.nt(),1)
 %         S = edges2Smatrix(msh, row);
 %         tetrahedron = msh.TetrahedronsByEdges(row,:);
@@ -64,7 +71,7 @@ function [ S_local ] = points2Smatrix(B)
 %
 % Syntax: tetrahedron2Smatrix(tetrahedron, nodes_coordinates)
 %
-    % the gradient of a 3D tetrahedron
+
     % imagine it like a tetrahedron with the points and values:
     % P1 = 1 - x - y - z
     % P2 = x
@@ -73,9 +80,11 @@ function [ S_local ] = points2Smatrix(B)
     % When we take the gradient of this, we get
     gradPhi_ref = [-1 -1 -1;1 0 0; 0 1 0;0 0 1]';
     w1 = 0.5; %integration weight for the single-point quadrature
-
-%     [B,~] = map2global(msh, node_coordinates);
-    gradPhi = (B') \ gradPhi_ref %gradients of shape functions of the GLOBAL element
+    
+    % gradients of shape functions of the GLOBAL element
+    gradPhi = (B') \ gradPhi_ref;
+    % this is actually equal to (B')^-1 * gradPhi_ref
+    % but is much faster
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first
@@ -100,7 +109,38 @@ function [ S_local ] = points2Smatrix(B)
 end
 
 function [ S_local ] = edges2Smatrix(B)
-%     edges
+
+    [integration_points, weights] = inttet(1);
+    [~, curl_ref] = basis_Nedelec0(integration_points);
+    
+    curlPhi = (B') \ curl_ref;
+%     size(cval)
+	%assembling the edge-contribution to the stiffness matrix
+    %only upper triangular parts first
     S_local = zeros(6);
-%     [B,~] = map2global(msh, edges);
+    S_local(1,2) = curlPhi(:,1)' * curlPhi(:,2);
+    S_local(1,3) = curlPhi(:,1)' * curlPhi(:,3);
+    S_local(1,4) = curlPhi(:,1)' * curlPhi(:,4);
+    S_local(1,5) = curlPhi(:,1)' * curlPhi(:,5);
+    S_local(1,6) = curlPhi(:,1)' * curlPhi(:,6);
+    S_local(2,3) = curlPhi(:,2)' * curlPhi(:,3);
+    S_local(2,4) = curlPhi(:,2)' * curlPhi(:,4);
+    S_local(2,5) = curlPhi(:,2)' * curlPhi(:,5);
+    S_local(2,6) = curlPhi(:,2)' * curlPhi(:,6);
+    S_local(3,4) = curlPhi(:,3)' * curlPhi(:,4);
+    S_local(3,5) = curlPhi(:,3)' * curlPhi(:,5);
+    S_local(3,6) = curlPhi(:,3)' * curlPhi(:,6);
+    S_local = S_local + S_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
+    
+    % calculate the diagonal
+    S_local(1,1) = curlPhi(:,1)' * curlPhi(:,1);
+    S_local(2,2) = curlPhi(:,2)' * curlPhi(:,2);
+    S_local(3,3) = curlPhi(:,3)' * curlPhi(:,3);
+    S_local(4,4) = curlPhi(:,4)' * curlPhi(:,4);
+    S_local(5,5) = curlPhi(:,5)' * curlPhi(:,5);
+    S_local(6,6) = curlPhi(:,6)' * curlPhi(:,6);
+    % Calculates the actual contribution of the tetrahedron by using single
+    % point quadrature
+    % TODO: add the contribution of the reluctivity
+    S_local = weights * S_local * abs(det(B));
 end

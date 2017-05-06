@@ -10,6 +10,7 @@ function [ B, b ] = map2global(msh, elementID)
         gm(:,n) = coordinates(t(n),:)';
     end
 %     gm
+    % global tetrahedron
     B = [gm(:,2)-gm(:,1) gm(:,3)-gm(:,1) gm(:,4)-gm(:,1)];
     b = gm(:,1);
 end

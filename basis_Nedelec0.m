@@ -1,4 +1,4 @@
-function [val,cval,nbasis] = basis_Nedelec0(p)
+function [val,cval] = basis_Nedelec0(p)
 
 % BASIS_NEDELEC0
 %   The basis functions for linear Nedelec element (of first type) for
@@ -39,31 +39,6 @@ function [val,cval,nbasis] = basis_Nedelec0(p)
 %                                           k'th component
 %                                           j'th point
 %
-
-dim = size(p,2);
-
-%2d
-if ( dim == 2 )
-    
-    nbasis = 3;
-    
-    % initialize val and cval
-    M    = size(p,1);
-    val  = zeros( M , 2 , 3 );
-    cval = zeros( M , 1 , 3 );
-
-    % calculate basis function values
-    val(:,:,1) = [ -p(:,2)    p(:,1)   ];
-    val(:,:,2) = [ -p(:,2)    p(:,1)-1 ];
-    val(:,:,3) = [ 1-p(:,2)   p(:,1)   ];
-
-    % calculate basis function curl values
-    cval = cval + 2;
-    
-%3d
-elseif ( dim == 3 )
-    
-    nbasis = 6;
     
     % initialize val and cval
     M    = size(p,1);
@@ -87,9 +62,5 @@ elseif ( dim == 3 )
     cval(:,4) = [ zero    zero    two];
     cval(:,5) = [ two     zero    zero];
     cval(:,6) = [ zero    two     zero];
-    
-else
-    
-    error('BASIS_NEDELEC0: Input data not understood')
     
 end
