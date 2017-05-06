@@ -17,8 +17,8 @@ np = size(msh.Points,1);
 % currentDensity(dirichletNodes) = 0;
 %dirichletNodes;
 
-[St Se] = buildStiffnessMatrix(msh, reluctivity)
-f = buildLoadVector(msh, currentDensity);
+[St Se] = buildStiffnessMatrix(msh, reluctivity);
+f = buildLoadVector(msh, currentDensity)
 
 freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 

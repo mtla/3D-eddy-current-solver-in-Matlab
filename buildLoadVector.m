@@ -1,4 +1,4 @@
-function [ load_vector ] = buildLoadVector(msh, currentDensity) 
+function [ LvectorNodes, LvectorEdges ] = buildLoadVector(msh, currentDensity) 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
 % calculates the load vector for this mesh and returns it.
@@ -12,24 +12,25 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
 %
 % output: [n×1 double] matrix
 %
-    np = size(msh.Points, 1); % number of points
-    ne = size(msh.TetrahedronsByPoints, 1); % number of tetrahedrons
-    load_vector = zeros(np,1);
-    % get rid of the for loop. Matlab does not like them that much
+
+    LvectorNodes = zeros(msh.np(), 1);
+    LvectorEdges = zeros(msh.ne(), 1);
     
     %reference shape functions expressed in polynomial basis
     Phi_ref = [1 -1 -1 -1;0 1 0 0;0 0 1 0;0 0 0 1]';
-
-    xa = [0.5854101966249685, 0.1381966011250105, 0.1381966011250105, 0.1381966011250105]; 
-    ya = [0.1381966011250105, 0.1381966011250105, 0.1381966011250105, 0.5854101966249685];
-    za = [0.1381966011250105, 0.1381966011250105, 0.5854101966249685, 0.1381966011250105];
-    quad_points = [xa;ya;za];
-    w_quad = [.25 .25 .25 .25]/6;
     
-    for row = 1:ne
+    % get integration points for reference tetrahedron
+    [quad_points, w_quad] = inttet(2);
+    % Transpose matrixes because inttet thinks in a translated way
+    quad_points = quad_points';
+    w_quad = w_quad';
+    
+    [values, ~] = basis_Nedelec0(quad_points');
+    
+    for row = 1:msh.nt()
         tetrahedron = msh.TetrahedronsByPoints(row, :);
-        [B,~] = map2global(msh, row);
 %         L = tetrahedron2Lvector(msh);
+        [B,~] = map2global(msh, row);
 
         %looping over the integration points
         for k_quad = 1:4
@@ -37,8 +38,9 @@ function [ load_vector ] = buildLoadVector(msh, currentDensity)
             psi = [1 quad_points(1,k_quad) quad_points(2,k_quad) quad_points(3,k_quad)]; %polynomial basis at the integration point
             Phi = psi * Phi_ref; %shape function values at the integration point
 %             val = w1 * Phi' * abs(det(B));
-            load_vector(tetrahedron') = load_vector(tetrahedron') + ...
+            LvectorNodes(tetrahedron') = LvectorNodes(tetrahedron') + ...
                 w1 * Phi' * abs(det(B));
         end
+%         for k_quad = 1:6
     end
 end
