@@ -17,13 +17,13 @@ np = size(msh.Points,1);
 % currentDensity(dirichletNodes) = 0;
 %dirichletNodes;
 
-[St Se] = buildStiffnessMatrix(msh, reluctivity);
-f = buildLoadVector(msh, currentDensity)
+[Sn Se] = buildStiffnessMatrix(msh, reluctivity);
+[fn fe] = buildLoadVector(msh, currentDensity)
 
 freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 
 %calculating potentials in the free nodes
-Afree = St(freeNodes,freeNodes) \ f(freeNodes);
+Afree = Sn(freeNodes,freeNodes) \ f(freeNodes);
 % NOTE: this is equivalent to Afree = inv(S) * f, but much faster
 
 %assembling solution in the entire region
