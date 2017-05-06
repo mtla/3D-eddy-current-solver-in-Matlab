@@ -24,27 +24,22 @@ classdef msh
             tetramesh(obj.TetrahedronsByPoints, obj.Points)
 %             tetramesh(obj.DT)
         end
-        function f = plot3(obj, values)
-            if (exist('values','var')==1)
-               % normalize values
+        function plot3(obj, values)
+           % normalize values
+           if (exist('values','var')==1)
                range = max(values) - min(values);
                values = (values - min(values)) / range;
-               for ne = 1:obj.ne()
-                   hold on
-                   e = obj.getEdgeCoordinates(ne);
+           end
+           for ne = 1:obj.ne()
+               hold on
+               e = obj.getEdgeCoordinates(ne);
+               if (exist('values','var')==1)
                    color = [values(ne) 0 1-values(ne)];
                    plot3(e(:,1),e(:,2),e(:,3),'Color', color);
-                   
-%                    e = obj.getEdgeCoordinates(1:obj.ne());
-%                    plot3(e(:,1),e(:,2),e(:,3), [0.5 + values(ne) 0 0.2]);
-%                     h = surface(e(:,1), e(:,2), e(:,3), ...
-%                         values(:), 'EdgeColor','flat', 'FaceColor','none');
-%                     colormap( jet(numel(values)) )
+               else
+                   plot3(e(:,1),e(:,2),e(:,3));
                end
-            else
-                e = obj.getEdgeCoordinates(1:obj.ne());
-                plot3(e(:,1),e(:,2),e(:,3));
-            end
+           end
         end
         function p = points(obj)
             p = obj.Points;
