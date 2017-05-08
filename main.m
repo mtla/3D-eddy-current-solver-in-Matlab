@@ -37,3 +37,7 @@ figure(2)
 scatter3(msh, A_total);
 plot3(msh, Aedges);
 % tetramesh(msh.ConnectivityList, msh.Points, Afree);
+
+writeResults([msh.Points, A_total])
+
+disp('Done!')

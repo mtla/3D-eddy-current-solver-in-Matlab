@@ -45,5 +45,8 @@ figure(2)
 scatter3(msh, A_total);
 plot3(msh, Aedges);
 
-[filename, filefolder] = uiputfile({'*.csv','Comma separated file';'*.txt','Raw Text File';'*.vtk','Binary Paraview file'}, 'Save output');
-output_path = strcat(filefolder,filename);
+% results = ["X","Y","Z","scalars"]
+results = [msh.Points, A_total]
+writeResults(results);
+
+disp('Done!')
