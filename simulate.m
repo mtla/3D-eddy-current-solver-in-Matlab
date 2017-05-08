@@ -7,6 +7,13 @@ dirichlet_path = strcat(filefolder,filename);
 msh = readMesh(mesh_path);
 dirichletNodes = readDirichletNodes(msh, dirichlet_path);
 
+if (exist('permittivity','var')==0)
+    permittivity = 10;
+end
+if (exist('permeability','var')==0)
+    permeability = 10;
+end
+
 prompt = {'Permittivity in element:','Permeability in element:'};
 dlg_title = 'Input';
 num_lines = 1;
@@ -14,7 +21,7 @@ defaultans = {num2str(permittivity), num2str(permeability)};
 constants = inputdlg(prompt,dlg_title,num_lines,defaultans);
 [permittivity, permeability] = constants{:};
 
-permittivity = num2str(permittivity);
+permittivity = str2num(permittivity);
 % plot mesh
 figure(1)
 tetramesh(msh);
@@ -38,5 +45,5 @@ figure(2)
 scatter3(msh, A_total);
 plot3(msh, Aedges);
 
-[filename, filefolder] = uisavefile({'*.csv','Comma separated file';'*.txt','Raw Text File';'*.vtk','Binary Paraview file'}, 'Save output');
+[filename, filefolder] = uiputfile({'*.csv','Comma separated file';'*.txt','Raw Text File';'*.vtk','Binary Paraview file'}, 'Save output');
 output_path = strcat(filefolder,filename);
