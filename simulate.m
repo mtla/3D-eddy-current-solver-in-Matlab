@@ -21,7 +21,7 @@ defaultans = {num2str(permittivity), num2str(permeability)};
 constants = inputdlg(prompt,dlg_title,num_lines,defaultans);
 [permittivity, permeability] = constants{:};
 
-permittivity = str2num(permittivity);
+permittivity = str2double(permittivity);
 % plot mesh
 figure(1)
 tetramesh(msh);
