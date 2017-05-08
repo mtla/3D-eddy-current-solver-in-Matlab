@@ -34,8 +34,8 @@ function [ sMatrixNodes, sMatrixEdges ] = buildStiffnessMatrix(msh, reluctivity)
         Sedges = edges2Smatrix(B);
         for i = 1:6
             for j = 1:6
-                sMatrixEdges(edges(i), edges(j)) = ...
-                   sMatrixEdges(edges(i), edges(j)) +  Sedges(i,j);
+                sMatrixEdges(abs(edges(i)), abs(edges(j))) = ...
+                   sMatrixEdges(abs(edges(i)), abs(edges(j))) +  Sedges(i,j);
             end
         end
     end

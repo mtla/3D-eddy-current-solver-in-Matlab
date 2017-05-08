@@ -128,7 +128,7 @@ classdef msh < handle
             pairs = combnk(t,2);
             [~,b] = ismember(pairs, obj.Edges, 'rows');
             [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
-            edges = b' + tmp';
+            edges = b' - tmp'; % e negative indice marks edges going the "wrong" direction
 %             t = obj.TetrahedronsByPoints(tetrahedronID,:);
 
         end
