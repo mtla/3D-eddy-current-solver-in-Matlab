@@ -7,6 +7,9 @@ dirichlet_path = strcat(filefolder,filename);
 msh = readMesh(mesh_path);
 dirichletNodes = readDirichletNodes(msh, dirichlet_path);
 
+if (exist('passes','var')==0)
+    passes = 2;
+end
 if (exist('permittivity','var')==0)
     permittivity = 10;
 end
@@ -14,12 +17,15 @@ if (exist('permeability','var')==0)
     permeability = 10;
 end
 
-prompt = {'Permittivity in element:','Permeability in element:'};
+prompt = {'Subdivide mesh # times: ','Permittivity in element:','Permeability in element:'};
 dlg_title = 'Input';
 num_lines = 1;
-defaultans = {num2str(permittivity), num2str(permeability)};
+defaultans = {num2str(passes), num2str(permittivity), num2str(permeability)};
 constants = inputdlg(prompt,dlg_title,num_lines,defaultans);
-[permittivity, permeability] = constants{:};
+[passes, permittivity, permeability] = constants{:};
+
+passes = str2num(passes);
+msh.refine(passes);
 
 permittivity = str2double(permittivity);
 % plot mesh

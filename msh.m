@@ -18,15 +18,21 @@ classdef msh < handle
             obj.DT = delaunayTriangulation(vertices);
             obj.Points = obj.DT.Points;
             obj.TetrahedronsByPoints = obj.DT.ConnectivityList;
-            obj.refine(1);
+%             obj.refine(1);
             [e,~] = edges(obj);
             obj.Edges = e;
             obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
         end
         function refine(obj, passes)
+            tic
             for i = 1:passes
+                toc
                 tetrarefine3(obj)
+                disp(strcat("Refined tetrahedron ",num2str(i),"times in ",num2str(toc)," seconds."));
+                disp(strcat("It has now ",num2str(size(obj.TetrahedronsByPoints,1))," tetrahedrons."));
             end
+            [obj.Edges, ~] = edges(obj);
+            obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
         end
         function tetramesh(obj)
             tetramesh(obj.TetrahedronsByPoints, obj.Points)
