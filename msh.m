@@ -76,7 +76,8 @@ classdef msh < handle
                          t(1) t(4)];
                 e(tID*6-5:tID*6,:) = edges;
             end
-%             duplicates = intersect(e, fliplr(e),'rows')
+            e
+            commonRows = ismember(e,fliplr(e),'rows')
             all = e;
             e = unique(e,'rows');
         end
@@ -117,13 +118,13 @@ classdef msh < handle
 %     methods(Access = private)
 
         function tbe = tetrahedrons2edges(obj)
-            [edges, tedges] = obj.edges()
+            [edges, tedges] = obj.edges();
             tbe = zeros(obj.nt(), 6); 
             for tID = 1:obj.nt()
-                current_tetrahedron = tedges(tID*6-5:tID*6,:)
+                current_tetrahedron = tedges(tID*6-5:tID*6,:);
                 tetrahedron = zeros(1,6);
                 for i = 1:6
-                    cedge = current_tetrahedron(i,:)
+                    cedge = current_tetrahedron(i,:);
                     [~, tetrahedron(i)] = ismember(cedge,edges,'rows');
                 end
                 tbe(tID,:) = tetrahedron;
