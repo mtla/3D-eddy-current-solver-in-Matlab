@@ -32,12 +32,15 @@ Aedges = Se \ fe;
 A_total = zeros(np,1);
 A_total(freeNodes) = Afree;
 
+msh.setPointValues(A_total);
+msh.setEdgeValues(Aedges);
+
 figure(2)
 % scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),A_total);
 scatter3(msh, A_total);
 plot3(msh, Aedges);
 % tetramesh(msh.ConnectivityList, msh.Points, Afree);
 
-writeResults([msh.Points, A_total])
+writeResults(msh)
 
 disp('Done!')

@@ -7,8 +7,10 @@ classdef msh < handle
         DT
         Points
         TetrahedronsByPoints
+        PointValues
         Edges
         TetrahedronsByEdges
+        EdgeValues
     end
     
     methods
@@ -67,6 +69,16 @@ classdef msh < handle
         end
         function p = points(obj)
             p = obj.Points;
+        end
+        function [points, edges] = getTetrahedrons(obj)
+            points = obj.TetrahedronsByPoints;
+            edges = obj.TetrahedronsByEdges;
+        end
+        function setPointValues(obj, values)
+            obj.PointValues = values;
+        end
+        function setEdgeValues(obj, values)
+            obj.EdgeValues = values;
         end
         function [unique_edges, all_edges] = edges(obj)
             n = obj.nt(); % number of tetrahedrons

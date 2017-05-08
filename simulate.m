@@ -41,12 +41,14 @@ Aedges = Se \ fe;
 A_total = zeros(np,1);
 A_total(freeNodes) = Afree;
 
+msh.setPointValues(A_total);
+msh.setEdgeValues(Aedges);
+
 figure(2)
 scatter3(msh, A_total);
 plot3(msh, Aedges);
 
 % results = ["X","Y","Z","scalars"]
-results = [msh.Points, A_total]
-writeResults(results);
+writeResults(msh);
 
 disp('Done!')
