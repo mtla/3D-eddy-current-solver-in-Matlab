@@ -1,4 +1,4 @@
-classdef msh
+classdef msh < handle
     % We just create our own class and add functionality to it because 
     % matlab does not allow us to extend the delaunayTriangulation
     % class.
@@ -16,13 +16,18 @@ classdef msh
             obj.DT = delaunayTriangulation(vertices);
             obj.Points = obj.DT.Points;
             obj.TetrahedronsByPoints = obj.DT.ConnectivityList;
+%             tetrarefine3(obj);
 %             obj.TetrahedronsByPoints = obj.removeDuplicateTetrahedrons();
             obj.Edges = edges(obj.DT);
             obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
         end
         function tetramesh(obj)
             tetramesh(obj.TetrahedronsByPoints, obj.Points)
-%             tetramesh(obj.DT)
+        end
+        function tetrarefine3(obj)
+            [p, t,~] = tetrarefine3(obj.Points, obj.TetrahedronsByPoints);
+            obj.Points = p;
+            obj.TetrahedronsByPoints = t;
         end
         function plot3(obj, values)
            % normalize values
@@ -58,8 +63,22 @@ classdef msh
         function p = points(obj)
             p = obj.Points;
         end
-        function e = edges(obj)
-            e = obj.Edges;
+        function [e, all] = edges(obj)
+            n = obj.nt(); % number of tetrahedrons
+            e = zeros(n*6,2);
+            for tID = 1:n
+                t = obj.TetrahedronsByPoints(tID,:); % tetrahedron
+                edges = [t(2) t(4); ...
+                         t(2) t(3); ...
+                         t(2) t(1); ...
+                         t(4) t(3); ...
+                         t(3) t(1); ...
+                         t(1) t(4)];
+                e(tID*6-5:tID*6,:) = edges;
+            end
+%             duplicates = intersect(e, fliplr(e),'rows')
+            all = e;
+            e = unique(e,'rows');
         end
         function np = np(obj) % number of points in mesh
             np = size(obj.Points,1);
@@ -86,15 +105,28 @@ classdef msh
             [~,b] = ismember(pairs, obj.Edges, 'rows');
             [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
             edges = b' + tmp';
+%             t = obj.TetrahedronsByPoints(tetrahedronID,:);
+%             edges = [t(2) t(4); ...
+%                      t(2) t(3); ...
+%                      t(2) t(1); ...
+%                      t(4) t(3); ...
+%                      t(3) t(1); ...
+%                      t(1) t(4)];
         end
 %     end
 %     methods(Access = private)
 
         function tbe = tetrahedrons2edges(obj)
-            n = obj.nt(); % number of tetrahedrons
-            tbe = zeros(n, 6); 
-            for row = 1:n
-                tbe(row,:) = obj.tetrahedron2edges(row);
+            [edges, tedges] = obj.edges()
+            tbe = zeros(obj.nt(), 6); 
+            for tID = 1:obj.nt()
+                current_tetrahedron = tedges(tID*6-5:tID*6,:)
+                tetrahedron = zeros(1,6);
+                for i = 1:6
+                    cedge = current_tetrahedron(i,:)
+                    [~, tetrahedron(i)] = ismember(cedge,edges,'rows');
+                end
+                tbe(tID,:) = tetrahedron;
             end
         end
         function tetrahedrons = removeDuplicateTetrahedrons(obj)
@@ -102,8 +134,6 @@ classdef msh
 %             a = (1:obj.np())';
 %             occurence = histc(obj.TetrahedronsByPoints(:),a);
             for n = 1:size(tetrahedrons,1)
-%                 n
-%                 obj.ne()
                 [rows,~] = find(tetrahedrons==n,size(tetrahedrons,1),'first');
                 tetrahedrons(rows(5:end),:) = [];
             end
