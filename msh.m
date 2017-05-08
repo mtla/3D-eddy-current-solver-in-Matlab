@@ -76,10 +76,25 @@ classdef msh < handle
                          t(1) t(4)];
                 e(tID*6-5:tID*6,:) = edges;
             end
-            e
-            commonRows = ismember(e,fliplr(e),'rows')
+%             e
             all = e;
-            e = unique(e,'rows');
+            e = unique(e,'rows')
+            for en = 1:size(e,1)
+                try
+                    edge = e(en,:)
+                catch
+                end
+%                 ismember(edge,e,'rows')
+                [rows,~] = find(e==edge,1)
+%                 [~, rows] = ismember(edge,e,'rows')
+                e(rows(2:end),:) = [];
+                [rows,~] = find(e==fliplr(edge),1)
+                e(rows(2:end),:) = [];
+            end
+            
+            commonRows = ismember(e,fliplr(e),'rows')
+            e
+            size(e)
         end
         function np = np(obj) % number of points in mesh
             np = size(obj.Points,1);
