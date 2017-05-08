@@ -28,7 +28,7 @@ classdef msh
            % normalize values
            if (exist('values','var')==1)
                range = max(values) - min(values);
-               values = (values - min(values)) / range;
+               values = (values - min(values)) / range - min(values);
            end
            for ne = 1:obj.ne()
                hold on
@@ -42,20 +42,17 @@ classdef msh
            end
         end
         function scatter3(obj, values)
+           hold on
+           node = obj.Points;
            % normalize values
            if (exist('values','var')==1)
                range = max(values) - min(values);
-               values = (values - min(values)) / range;
-           end
-           for ne = 1:obj.np()
-               hold on
-               node = obj.Points;
-               if (exist('values','var')==1)
-                   color = [values(ne) 0 1-values(ne)];
-                   scatter3(node(:,1),node(:,2),node(:,3),'MarkerFaceColor', color);
-               else
-                   scatter3(node(:,1),node(:,2),node(:,3));
-               end
+               values = (values - min(values)) / range - min(values);
+               color = [values zeros(obj.np(),1) 1-values];
+               
+               scatter3(node(:,1),node(:,2),node(:,3), 50, color);%color);
+           else
+               scatter3(node(:,1),node(:,2),node(:,3));
            end
         end
         function p = points(obj)
