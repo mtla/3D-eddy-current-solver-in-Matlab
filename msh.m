@@ -16,10 +16,15 @@ classdef msh < handle
             obj.DT = delaunayTriangulation(vertices);
             obj.Points = obj.DT.Points;
             obj.TetrahedronsByPoints = obj.DT.ConnectivityList;
-%             tetrarefine3(obj);
-%             obj.TetrahedronsByPoints = obj.removeDuplicateTetrahedrons();
-            obj.Edges = edges(obj.DT);
+            obj.refine(1);
+            [e,~] = edges(obj);
+            obj.Edges = e;
             obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
+        end
+        function refine(obj, passes)
+            for i = 1:passes
+                tetrarefine3(obj)
+            end
         end
         function tetramesh(obj)
             tetramesh(obj.TetrahedronsByPoints, obj.Points)
@@ -63,9 +68,9 @@ classdef msh < handle
         function p = points(obj)
             p = obj.Points;
         end
-        function [e, all] = edges(obj)
+        function [unique_edges, all_edges] = edges(obj)
             n = obj.nt(); % number of tetrahedrons
-            e = zeros(n*6,2);
+            unique_edges = zeros(n*6,2);
             for tID = 1:n
                 t = obj.TetrahedronsByPoints(tID,:); % tetrahedron
                 edges = [t(2) t(4); ...
@@ -74,27 +79,24 @@ classdef msh < handle
                          t(4) t(3); ...
                          t(3) t(1); ...
                          t(1) t(4)];
-                e(tID*6-5:tID*6,:) = edges;
+                unique_edges(tID*6-5:tID*6,:) = edges;
             end
-%             e
-            all = e;
-            e = unique(e,'rows')
-            for en = 1:size(e,1)
+            all_edges = unique_edges;
+            % start parsing out the duplicate edges
+            for en = 1:size(unique_edges,1)
                 try
-                    edge = e(en,:)
+                    edge = unique_edges(en,:);
                 catch
+                    break
                 end
-%                 ismember(edge,e,'rows')
-                [rows,~] = find(e==edge,1)
-%                 [~, rows] = ismember(edge,e,'rows')
-                e(rows(2:end),:) = [];
-                [rows,~] = find(e==fliplr(edge),1)
-                e(rows(2:end),:) = [];
+                [rows,~] = ismember(unique_edges,edge,'rows');
+                [rows2,~] = ismember(unique_edges,fliplr(edge),'rows');
+                rows = rows | rows2;
+                if sum(rows) > 1
+                    rows(en) = false;
+                    unique_edges(rows,:) = [];
+                end
             end
-            
-            commonRows = ismember(e,fliplr(e),'rows')
-            e
-            size(e)
         end
         function np = np(obj) % number of points in mesh
             np = size(obj.Points,1);
@@ -116,18 +118,19 @@ classdef msh < handle
             points = obj.TetrahedronsByPoints(tetrahedronID,:);
         end
         function edges = tetrahedron2edges(obj, tetrahedronID)
-            tetrahedron = obj.TetrahedronsByPoints(tetrahedronID,:);
-            pairs = combnk(tetrahedron,2);
+            t = obj.TetrahedronsByPoints(tetrahedronID,:);
+            pairs = [t(2) t(4); ...
+                     t(2) t(3); ...
+                     t(2) t(1); ...
+                     t(4) t(3); ...
+                     t(3) t(1); ...
+                     t(1) t(4)];
+            pairs = combnk(t,2);
             [~,b] = ismember(pairs, obj.Edges, 'rows');
             [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
             edges = b' + tmp';
 %             t = obj.TetrahedronsByPoints(tetrahedronID,:);
-%             edges = [t(2) t(4); ...
-%                      t(2) t(3); ...
-%                      t(2) t(1); ...
-%                      t(4) t(3); ...
-%                      t(3) t(1); ...
-%                      t(1) t(4)];
+
         end
 %     end
 %     methods(Access = private)
