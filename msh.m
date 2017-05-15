@@ -28,8 +28,8 @@ classdef msh < handle
             for i = 1:passes
                 toc
                 tetrarefine3(obj)
-                disp(strcat("Refined tetrahedron ",num2str(i),"times in ",num2str(toc)," seconds."));
-                disp(strcat("It has now ",num2str(size(obj.TetrahedronsByPoints,1))," tetrahedrons."));
+                disp(strcat('Refined tetrahedron ',num2str(i),'times in ',num2str(toc),' seconds.'));
+                disp(strcat('It has now ',num2str(size(obj.TetrahedronsByPoints,1)),' tetrahedrons.'));
             end
             [obj.Edges, ~] = edges(obj);
             obj.TetrahedronsByEdges = tetrahedrons2edges(obj);

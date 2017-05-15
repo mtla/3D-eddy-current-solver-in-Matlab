@@ -8,13 +8,13 @@ function [ mesh ] = readMesh( source )
 %
 %              nothing: opens a dialog so user can choose a file
 %               string: tries to open that file
-%         matrix/array: directly input a mesh as [n×3] matrix
+%         matrix/array: directly input a mesh as [n?3] matrix
 %
 % output:
 %
 %   delaunayTriangulation with properties:
-%               Points: [n×3 double]
-%     ConnectivityList: [m×4 double]
+%               Points: [n?3 double]
+%     ConnectivityList: [m?4 double]
 %          Constraints: [] (usually empty)
 %
 % More info of delaunayTriangulation here: https://se.mathworks.com/help/matlab/ref/delaunaytriangulation-class.html
@@ -27,7 +27,7 @@ function [ mesh ] = readMesh( source )
     end
     if (ischar(source))
         [filefolder, filename, fileformat] = fileparts(source);
-        fullname = (strcat(filefolder,'\',filename,fileformat));
+        fullname = fullfile(filefolder,[filename,fileformat])
         if (strcmp(fileformat,'.obj'))
             mesh = readObj(fullname);
         else % assume .txt file

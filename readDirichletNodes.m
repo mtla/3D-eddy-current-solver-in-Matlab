@@ -7,11 +7,11 @@ function [ nodes ] = readDirichletNodes( DT, source )
 %
 %              nothing: opens a dialog so user can choose a file
 %               string: tries to open that file
-%         matrix/array: directly input a mesh as [n×3] matrix
+%         matrix/array: directly input a mesh as [n?3] matrix
 %
 % output:
 %
-%               nodes: [n×1 double]
+%               nodes: [n?1 double]
 %
     
     if (exist('source','var')==0)
@@ -20,7 +20,7 @@ function [ nodes ] = readDirichletNodes( DT, source )
     end
     if (ischar(source))
         [filefolder, filename, fileformat] = fileparts(source);
-        fullname = (strcat(filefolder,'\',filename,fileformat));
+        fullname = fullfile(filefolder,[filename,fileformat]);
         if (strcmp(fileformat,'.obj'))
             nodes_raw = readObj(fullname);
         else % assume .txt file

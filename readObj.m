@@ -283,7 +283,8 @@ twords=cell(1,length(i_start)); for j=1:length(i_start), twords{j}=tline(i_start
 
 function file_words=file2cellarray(filename)
 % Open a DI3D OBJ textfile
-fid=fopen(filename,'r');
+[fid, m]=fopen(filename,'r')
+filename
 file_text=fread(fid, inf, 'uint8=>char')';
 fclose(fid);
 file_lines = regexp(file_text, '\n+', 'split');
