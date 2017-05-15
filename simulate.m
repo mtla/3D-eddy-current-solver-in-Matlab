@@ -7,6 +7,7 @@ dirichlet_path = strcat(filefolder,filename);
 msh = readMesh(mesh_path);
 dirichletNodes = readDirichletNodes(msh, dirichlet_path);
 
+np = size(msh.Points,1);
 if (exist('passes','var')==0)
     passes = 2;
 end
