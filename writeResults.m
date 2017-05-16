@@ -14,6 +14,7 @@ function writeResults( results )
             fclose(fid);
             
             dlmwrite(output_path, [results.Points results.PointValues], '-append', 'precision', '%.6f', 'delimiter', ',');
+%             dlmwrite(output_path, [results.Edges(:,1) results.EdgeValues], '-append', 'precision', '%.6f', 'delimiter', ',');
 %             csvwrite(output_path, results)
         case '.vtk'
             points = results.Points;

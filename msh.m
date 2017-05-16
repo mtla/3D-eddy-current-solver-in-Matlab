@@ -64,10 +64,11 @@ classdef msh < handle
            node = obj.Points;
            % normalize values
            if (exist('values','var')==1)
+               values = obj.PointValues
                range = max(values) - min(values);
-               values = (values - min(values)) / range - min(values);
-               color = [values zeros(obj.np(),1) 1-values];
-               
+               values = (values - min(values)) / range - min(values)
+               color = [values zeros(size(values,1),1) 1-values];
+               node(:,1)
                scatter3(node(:,1),node(:,2),node(:,3), 50, color);%color);
            else
                scatter3(node(:,1),node(:,2),node(:,3));

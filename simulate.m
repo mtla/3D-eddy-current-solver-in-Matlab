@@ -42,11 +42,12 @@ freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 Afree = Sn(freeNodes,freeNodes) \ fn(freeNodes);
 % NOTE: this is equivalent to Afree = inv(S) * f, but much faster
 
-Aedges = Se \ fe;
+Aedges = Se \ fe
+A_total = Sn \ fn
 
 %assembling solution in the entire region
-A_total = zeros(np,1);
-A_total(freeNodes) = Afree;
+% A_total = zeros(np,1);
+% A_total(freeNodes) = Afree
 
 msh.setPointValues(A_total);
 msh.setEdgeValues(Aedges);
