@@ -27,7 +27,7 @@ function [ mesh ] = readMesh( source )
     end
     if (ischar(source))
         [filefolder, filename, fileformat] = fileparts(source);
-        fullname = fullfile(filefolder,[filename,fileformat])
+        fullname = fullfile(filefolder,[filename,fileformat]);
         if (strcmp(fileformat,'.obj'))
             mesh = readObj(fullname);
         else % assume .txt file

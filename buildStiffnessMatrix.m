@@ -113,7 +113,7 @@ function [ S_local ] = edges2Smatrix(B)
     [integration_points, weights] = inttet(1);
     [~, curl_ref] = basis_Nedelec0(integration_points);
     
-    curlPhi = B * curl_ref / det(B)
+    curlPhi = B * curl_ref / det(B);
 %     size(cval)
 	%assembling the edge-contribution to the stiffness matrix
     %only upper triangular parts first
