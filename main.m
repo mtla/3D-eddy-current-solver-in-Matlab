@@ -19,28 +19,35 @@ np = size(msh.Points,1);
 
 [Sn, Se] = buildStiffnessMatrix(msh, permittivity);
 [fn, fe] = buildLoadVector(msh);
+C = buildCMatrix(msh, permeability);
 
 freeNodes = setdiff(1:np, dirichletNodes); %nodes NOT in Dirichlet bnd
 
-% [T Omega] = inv([Se C; C' Sn]) * [fe; fn];
+% [T, Omega] = [Se C; C' Sn] \ [fe; fn]; 
+% [T, Omega] = inv([Se C'; C Sn]) * [fe; fn]
 
-% calculating potentials in the free nodes
-Afree = Sn(freeNodes,freeNodes) \ fn(freeNodes);
-% NOTE: this is equivalent to Afree = inv(S) * f, but much faster
+T = Se \ fe + C \ fn;
+Omega = C' \ fe + Sn \ fn;
 
-T = Se \ fe;
 
-%assembling solution in the entire region
-Omega = zeros(np,1);
-Omega(freeNodes) = Afree;
 
-msh.setPointValues(Omega);
-msh.setEdgeValues(T);
-
-figure(2)
-% scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),A_total);
-scatter3(msh, Omega);
-plot3(msh, T);
+% % calculating potentials in the free nodes
+% Afree = Sn(freeNodes,freeNodes) \ fn(freeNodes);
+% % NOTE: this is equivalent to Afree = inv(S) * f, but much faster
+% 
+% T = Se \ fe;
+% 
+% %assembling solution in the entire region
+% Omega = zeros(np,1);
+% Omega(freeNodes) = Afree;
+% 
+% msh.setPointValues(Omega);
+% msh.setEdgeValues(T);
+% 
+% figure(2)
+% % scatter3(msh.Points(:,1),msh.Points(:,2),msh.Points(:,3),A_total);
+% scatter3(msh, Omega);
+% plot3(msh, T);
 % tetramesh(msh.ConnectivityList, msh.Points, Afree);
 
 % writeResults(msh)
