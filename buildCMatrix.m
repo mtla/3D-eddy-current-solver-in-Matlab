@@ -21,7 +21,7 @@ function [ C ] = buildCMatrix(msh, permeability)
     for tID = 1:msh.nt()
         % we can calculate the affine transformation 
         [B,~] = map2global(msh, tID);
-        C_local = B2Cmatrix(B);
+        C_local = B2Cmatrix(B) * permeability;
         tetrahedron = msh.tetrahedron2points(tID);
         edges = msh.tetrahedron2edges(tID);
         for i = 1:6
@@ -55,7 +55,7 @@ function [ C_local ] = B2Cmatrix(B)
     [integration_points, weights] = inttet(1);
     [f_ref, ~] = basis_Nedelec0(integration_points);
     
-    W = (B')^-1 * f_ref
+    W = (B')^-1 * f_ref;
     % imagine it like a tetrahedron with the points and values:
     % P1 = 1 - x - y - z
     % P2 = x
@@ -72,22 +72,13 @@ function [ C_local ] = B2Cmatrix(B)
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first
-    C_local = zeros(4);
-    C_local(1,2) = gradPhi(:,1)' * gradPhi(:,2);
-    C_local(1,3) = gradPhi(:,1)' * gradPhi(:,3);
-    C_local(1,4) = gradPhi(:,1)' * gradPhi(:,4);
-    C_local(2,3) = gradPhi(:,2)' * gradPhi(:,3);
-    C_local(2,4) = gradPhi(:,2)' * gradPhi(:,4);
-    C_local(3,4) = gradPhi(:,3)' * gradPhi(:,4);
-    C_local = C_local + C_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
+    C_local = zeros(6,4);
+    for i = 1:6
+        C_local(i,1) = W(:,i)' * gradPhi(:,1);
+        C_local(i,2) = W(:,i)' * gradPhi(:,2);
+        C_local(i,3) = W(:,i)' * gradPhi(:,3);
+        C_local(i,4) = W(:,i)' * gradPhi(:,4);
+    end
     
-    % calculate the diagonal
-    C_local(1,1) = gradPhi(:,1)' * gradPhi(:,1);
-    C_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
-    C_local(3,3) = gradPhi(:,3)' * gradPhi(:,3);
-    C_local(4,4) = gradPhi(:,4)' * gradPhi(:,4);
-    % Calculates the actual contribution of the tetrahedron by using single
-    % point quadrature
-    % TODO: add the contribution of the reluctivity
-    C_local = w1 * C_local * abs(det(B));
+    C_local = w1 * C_local;
 end
