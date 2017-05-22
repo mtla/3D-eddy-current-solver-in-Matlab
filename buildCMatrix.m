@@ -21,13 +21,14 @@ function [ C ] = buildCMatrix(msh, permeability)
     for tID = 1:msh.nt()
         % we can calculate the affine transformation 
         [B,~] = map2global(msh, tID);
-        C_local = B2Cmatrix(B) * permeability;
-        tetrahedron = msh.tetrahedron2points(tID);
+        C_local = B2Cmatrix(B) * permeability
+        points = msh.tetrahedron2points(tID);
         edges = msh.tetrahedron2edges(tID);
-        for i = 1:6
-            for j = 1:4
-                C(edges(i), tetrahedron(j)) = ...
-                   C(edges(i), tetrahedron(j)) +  C_local(i,j);
+        for i = 1:4
+            for j = 1:6
+                C_local(i,j)
+                C(points(i), abs(edges(j))) = ...
+                   C(points(i), abs(edges(j))) +  C_local(i,j) * sign(edges(j));
             end
         end
     end
@@ -80,5 +81,5 @@ function [ C_local ] = B2Cmatrix(B)
         C_local(i,4) = W(:,i)' * gradPhi(:,4);
     end
     
-    C_local = w1 * C_local;
+    C_local = w1 * C_local';
 end
