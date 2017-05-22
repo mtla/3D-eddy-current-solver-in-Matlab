@@ -21,7 +21,7 @@ classdef msh < handle
 %             obj.refine(1);
             [e,~] = edges(obj);
             obj.Edges = e;
-            obj.TetrahedronsByEdges = tetrahedrons2edges(obj);
+            obj.TetrahedronsByEdges = tetrahedrons2edges(obj)
         end
         function refine(obj, passes)
             tic
@@ -59,14 +59,14 @@ classdef msh < handle
                end
            end
         end
-        function scatter3(obj, values)
+        function scatter3(obj)
            hold on
            node = obj.Points;
            % normalize values
            if (exist('values','var')==1)
-               values = obj.PointValues
+               values = obj.PointValues;
                range = max(values) - min(values);
-               values = (values - min(values)) / range - min(values)
+               values = (values - min(values)) / range - min(values);
                color = [values zeros(size(values,1),1) 1-values];
                node(:,1)
                scatter3(node(:,1),node(:,2),node(:,3), 50, color);%color);
@@ -80,6 +80,20 @@ classdef msh < handle
         function [points, edges] = getTetrahedrons(obj)
             points = obj.TetrahedronsByPoints;
             edges = obj.TetrahedronsByEdges;
+        end
+        function centroid = getCentroid(obj)
+            centroid = zeros(obj.nt(),3)
+            for i = 1:obj.nt()
+                centroid(i,:) = centerOfTetrahedron(obj, i);
+            end
+        end 
+        function center = centerOfTetrahedron(obj, tID)
+            points = obj.tetrahedron2points(tID);
+            center = zeros(1,3);
+            for i = 1:4
+                center = center + obj.Points(points(i));
+            end
+            center = center / 4;
         end
         function setPointValues(obj, values)
             obj.PointValues = values;
@@ -138,12 +152,12 @@ classdef msh < handle
         end
         function edges = tetrahedron2edges(obj, tetrahedronID)
             t = obj.TetrahedronsByPoints(tetrahedronID,:);
-            pairs = [t(2) t(4); ...
-                     t(2) t(3); ...
-                     t(2) t(1); ...
-                     t(4) t(3); ...
-                     t(3) t(1); ...
-                     t(1) t(4)]; % this creates a lot of infinity values :( and NaN
+%             pairs = [t(2) t(4); ...
+%                      t(2) t(3); ...
+%                      t(2) t(1); ...
+%                      t(4) t(3); ...
+%                      t(3) t(1); ...
+%                      t(1) t(4)]; % this creates a lot of infinity values :( and NaN
             pairs = combnk(t,2);
             [~,b] = ismember(pairs, obj.Edges, 'rows');
             [~,tmp] = ismember(pairs, fliplr(obj.Edges), 'rows');
@@ -155,16 +169,17 @@ classdef msh < handle
 %     methods(Access = private)
 
         function tbe = tetrahedrons2edges(obj)
-            [edges, tedges] = obj.edges();
+%             [edges, tedges] = obj.edges();
             tbe = zeros(obj.nt(), 6); 
             for tID = 1:obj.nt()
-                current_tetrahedron = tedges(tID*6-5:tID*6,:);
-                tetrahedron = zeros(1,6);
-                for i = 1:6
-                    cedge = current_tetrahedron(i,:);
-                    [~, tetrahedron(i)] = ismember(cedge,edges,'rows');
-                end
-                tbe(tID,:) = tetrahedron;
+%                 current_tetrahedron = tedges(tID*6-5:tID*6,:);
+%                 tetrahedron = zeros(1,6);
+%                 for i = 1:6
+%                     cedge = current_tetrahedron(i,:);
+%                     [~, tetrahedron(i)] = ismember(cedge,edges,'rows');
+%                 end
+%                 tbe(tID,:) = tetrahedron;
+                tbe(tID,:) = obj.tetrahedron2edges(tID);
             end
         end
         function tetrahedrons = removeDuplicateTetrahedrons(obj)
