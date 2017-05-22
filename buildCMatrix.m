@@ -1,4 +1,4 @@
-function [ C ] = buildCMatrix(msh)
+function [ C ] = buildCMatrix(msh, permeability)
 % BUILDSTIFFNESMATRIX 
 % This function inputs a delaunayTriangulation (struct), that is basically
 % a mesh that has been divided into smaller tetrahedrons. It then
@@ -21,39 +21,20 @@ function [ C ] = buildCMatrix(msh)
     for tID = 1:msh.nt()
         % we can calculate the affine transformation 
         [B,~] = map2global(msh, tID);
-        Snodes = points2Cmatrix(B);
+        C_local = B2Cmatrix(B);
         tetrahedron = msh.tetrahedron2points(tID);
-        for i = 1:4
-            for j = 1:4
-                C(tetrahedron(i), tetrahedron(j)) = ...
-                   C(tetrahedron(i), tetrahedron(j)) +  Snodes(i,j);
-            end
-        end
         edges = msh.tetrahedron2edges(tID);
-        Sedges = edges2Smatrix(B);
         for i = 1:6
-            for j = 1:6
-                sMatrixEdges(abs(edges(i)), abs(edges(j))) = ...
-                   sMatrixEdges(abs(edges(i)), abs(edges(j))) +  Sedges(i,j);
+            for j = 1:4
+                C(edges(i), tetrahedron(j)) = ...
+                   C(edges(i), tetrahedron(j)) +  C_local(i,j);
             end
         end
     end
-    C = C * reluctivity;
-    sMatrixEdges = sMatrixEdges * reluctivity;
-%     for row = 1:size(msh.nt(),1)
-%         S = edges2Smatrix(msh, row);
-%         tetrahedron = msh.TetrahedronsByEdges(row,:);
-%         for i = 1:4
-%             for j = 1:4
-%                 sMatrixEdges(tetrahedron(i), tetrahedron(j)) = ...
-%                    sMatrixEdges(tetrahedron(i), tetrahedron(j)) +  S(i,j);
-%             end
-%         end
-%     end
-    
+    C = C * permeability;
 end
 
-function [ S_local ] = points2Cmatrix(B)
+function [ C_local ] = B2Cmatrix(B)
 % TETRAHEDRON2MATRIX This functions takes an DelaunayTriangulation (struct)
 % along with the position of the tetrahedron (in the struct)
 %
@@ -71,6 +52,10 @@ function [ S_local ] = points2Cmatrix(B)
 % Syntax: tetrahedron2Smatrix(tetrahedron, nodes_coordinates)
 %
 
+    [integration_points, weights] = inttet(1);
+    [f_ref, ~] = basis_Nedelec0(integration_points);
+    
+    W = (B')^-1 * f_ref
     % imagine it like a tetrahedron with the points and values:
     % P1 = 1 - x - y - z
     % P2 = x
@@ -87,22 +72,22 @@ function [ S_local ] = points2Cmatrix(B)
     
     %assembling the element-contribution to the stiffness matrix
     %only upper triangular parts first
-    S_local = zeros(4);
-    S_local(1,2) = gradPhi(:,1)' * gradPhi(:,2);
-    S_local(1,3) = gradPhi(:,1)' * gradPhi(:,3);
-    S_local(1,4) = gradPhi(:,1)' * gradPhi(:,4);
-    S_local(2,3) = gradPhi(:,2)' * gradPhi(:,3);
-    S_local(2,4) = gradPhi(:,2)' * gradPhi(:,4);
-    S_local(3,4) = gradPhi(:,3)' * gradPhi(:,4);
-    S_local = S_local + S_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
+    C_local = zeros(4);
+    C_local(1,2) = gradPhi(:,1)' * gradPhi(:,2);
+    C_local(1,3) = gradPhi(:,1)' * gradPhi(:,3);
+    C_local(1,4) = gradPhi(:,1)' * gradPhi(:,4);
+    C_local(2,3) = gradPhi(:,2)' * gradPhi(:,3);
+    C_local(2,4) = gradPhi(:,2)' * gradPhi(:,4);
+    C_local(3,4) = gradPhi(:,3)' * gradPhi(:,4);
+    C_local = C_local + C_local'; % S_local is symmetrical so we can get the lower part by summing its transpose
     
     % calculate the diagonal
-    S_local(1,1) = gradPhi(:,1)' * gradPhi(:,1);
-    S_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
-    S_local(3,3) = gradPhi(:,3)' * gradPhi(:,3);
-    S_local(4,4) = gradPhi(:,4)' * gradPhi(:,4);
+    C_local(1,1) = gradPhi(:,1)' * gradPhi(:,1);
+    C_local(2,2) = gradPhi(:,2)' * gradPhi(:,2);
+    C_local(3,3) = gradPhi(:,3)' * gradPhi(:,3);
+    C_local(4,4) = gradPhi(:,4)' * gradPhi(:,4);
     % Calculates the actual contribution of the tetrahedron by using single
     % point quadrature
     % TODO: add the contribution of the reluctivity
-    S_local = w1 * S_local * abs(det(B));
+    C_local = w1 * C_local * abs(det(B));
 end
